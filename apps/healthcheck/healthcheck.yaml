@@ -19,4 +19,18 @@ spec:
     spec:
       containers:
       - name: healthcheck
-        image: ghcr.io/toof-jp/healthcheck:sha-086eaf2
+        image: ghcr.io/toof-jp/healthcheck:sha-7ba6f32
+        env:
+        - name: MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: healthcheck-configmap
+              key: message
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: healthcheck-configmap
+  namespace: healthcheck
+data:
+  message: "hello, world"
