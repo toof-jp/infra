@@ -19,4 +19,4 @@ spec:
     spec:
       containers:
       - name: healthcheck
-        image: ghcr.io/toof-jp/healthcheck:latest
+        image: ghcr.io/toof-jp/healthcheck:sha-086eaf2
