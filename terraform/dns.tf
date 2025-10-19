@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 5"
-    }
-  }
-}
-
-variable "account_id" {
-  type = string
-}
-
 resource "cloudflare_zone" "toof_jp" {
   account = {
     id = var.account_id
