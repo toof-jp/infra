@@ -24,12 +24,9 @@ spec:
         ports:
         - name: http
           containerPort: 3000
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: database-secret
-              key: url
+        envFrom:
+        - secretRef:
+            name: database-secret
 ---
 apiVersion: v1
 kind: Service
