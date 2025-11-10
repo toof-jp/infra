@@ -1,6 +1,7 @@
 # Google Cloud Secret Manager
 ## service account
 service accountの作成
+
 `terraform/google/secret_manager.tf`にSecret Manger用のservice accountとIAMロールの定義がある
 
 service account keyの作成
