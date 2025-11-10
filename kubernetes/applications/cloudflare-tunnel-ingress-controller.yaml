@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudflare-tunnel-ingress-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.strrl.dev
+    chart: cloudflare-tunnel-ingress-controller
+    targetRevision: "0.0.21"
+    helm:
+      valuesObject:
+        cloudflare:
+          secretRef:
+            name: cloudflare-secret   # ← 参照するSecret名
+            accountIDKey: account_id           # ← Secret内のキー名
+            tunnelNameKey: tunnel_name         # ← Secret内のキー名
+            apiTokenKey: api_token             # ← Secret内のキー名
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cloudflare-tunnel-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
