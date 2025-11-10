@@ -21,24 +21,8 @@ spec:
       containers:
       - name: discord-webhook
         image: ghcr.io/toof-jp/discord-webhook:sha-4319bdc
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: database-secret
-              key: url
-        - name: WEBHOOK_URL
-          valueFrom:
-            secretKeyRef:
-              name: discord-webhook-secret
-              key: WEBHOOK_URL
-        - name: IMAGE_URL_PREFIX
-          valueFrom:
-            secretKeyRef:
-              name: discord-webhook-secret
-              key: IMAGE_URL_PREFIX
-        - name: REDIS_URL
-          valueFrom:
-            secretKeyRef:
-              name: discord-webhook-secret
-              key: REDIS_URL
+        envFrom:
+        - secretRef:
+            name: database-secret
+        - secretRef:
+            name: discord-webhook-secret
