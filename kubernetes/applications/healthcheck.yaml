@@ -1,0 +1,19 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: healthcheck
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/toof-jp/infra
+    targetRevision: HEAD
+    path: kubernetes/applications/healthcheck
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: healthcheck
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
