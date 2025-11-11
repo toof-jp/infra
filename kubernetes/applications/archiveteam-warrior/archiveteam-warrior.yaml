@@ -25,7 +25,7 @@ spec:
         - containerPort: 8001
         env:
         - name: DOWNLOADER
-          value: toof.jp
+          value: toof-jp
         - name: SELECTED_PROJECT
           value: gooblog
         - name: CONCURRENT_ITEMS
