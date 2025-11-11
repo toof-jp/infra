@@ -3,16 +3,16 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: bbs
-  namespace: archivetema-warrior
+  namespace: archiveteam-warrior
 spec:
   project: default
   source:
     repoURL: https://github.com/toof-jp/infra
     targetRevision: HEAD
-    path: kubernetes/applications/archivetema-warrior
+    path: kubernetes/applications/archiveteam-warrior
   destination:
     server: https://kubernetes.default.svc
-    namespace: archivetema-warrior
+    namespace: archiveteam-warrior
   syncPolicy:
     automated:
       prune: true
