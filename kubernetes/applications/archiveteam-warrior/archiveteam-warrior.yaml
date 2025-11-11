@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: search-backend
+        app: archiveteam-warrior
     spec:
       containers:
       - name: archiveteam-warrior
