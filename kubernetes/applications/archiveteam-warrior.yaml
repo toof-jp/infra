@@ -1,0 +1,19 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bbs
+  namespace: archivetema-warrior
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/toof-jp/infra
+    targetRevision: HEAD
+    path: kubernetes/applications/archivetema-warrior
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: archivetema-warrior
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
