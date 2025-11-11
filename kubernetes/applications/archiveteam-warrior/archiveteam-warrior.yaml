@@ -20,14 +20,14 @@ spec:
     spec:
       containers:
       - name: archiveteam-warrior
-        image: atdr.meo.ws/archiveteam/warrior-dockerfile@sha256:09ec5eb0ff6fcfd95c34582780015f2c283a6a91013098d1b91a46882ca29bfc
+        image: atdr.meo.ws/archiveteam/warrior-dockerfile:latest
         ports:
         - containerPort: 3001
         env:
         - name: DOWNLOADER
           value: toof.jp
         - name: SELECTED_PROJECT
-          value: auto
+          value: gooblog
         - name: CONCURRENT_ITEMS
           value: "2"
       nodeSelector:
