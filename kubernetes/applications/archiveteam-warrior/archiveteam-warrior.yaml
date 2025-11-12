@@ -22,7 +22,8 @@ spec:
       - name: archiveteam-warrior
         image: atdr.meo.ws/archiveteam/warrior-dockerfile:latest
         ports:
-        - containerPort: 8001
+        - name: http
+          containerPort: 8001
         env:
         - name: DOWNLOADER
           value: toof-jp
@@ -39,10 +40,28 @@ metadata:
   name: archiveteam-warrior
   namespace: archiveteam-warrior
 spec:
-  type: NodePort
   selector:
     app: archiveteam-warrior
   ports:
-  - nodePort: 30163
+  - name: http
     port: 8001
     targetPort: 8001
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: archiveteam-warrior
+  namespace: archiveteam-warrior
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+  - host: warrior.toof.jp
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: archiveteam-warrior
+            port:
+              number: 8001
