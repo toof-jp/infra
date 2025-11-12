@@ -18,6 +18,11 @@ spec:
       labels:
         app: archiveteam-warrior
     spec:
+      hostAliases:
+      - ip: "169.150.225.41"
+        hostnames:
+        - "transfer.archivete.am"
+        - "archiveteamtransfer.b-cdn.net"
       containers:
       - name: archiveteam-warrior
         image: atdr.meo.ws/archiveteam/warrior-dockerfile:latest
