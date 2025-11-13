@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: search-backend
+  namespace: bbs
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+  - host: argocd.toof.jp
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 80
