@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-crawler
+  namespace: bbs
+spec:
+  selector:
+    matchLabels:
+      app: search-crawler
+  template:
+    metadata:
+      labels:
+        app: search-crawler
+    spec:
+      containers:
+      - name: search-crawler
+        image: ghcr.io/toof-jp/search-crawler:sha-b4fc12c
+        env:
+        - name: AWS_REGION
+          value: ap-northeast-1
+        - name: BUCKET_NAME
+          value: oekakiko
+        envFrom:
+        - secretRef:
+            name: postgres-secret
+        - secretRef:
+            name: search-crawler-secret
