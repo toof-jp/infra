@@ -1,4 +1,4 @@
-resource "cloudflare_zero_trust_access_policy" "warrior_allow_toof" {
+resource "cloudflare_zero_trust_access_policy" "allow_toof" {
   account_id = var.account_id
   name       = "allow-toof"
   decision   = "allow"
@@ -21,7 +21,7 @@ resource "cloudflare_zero_trust_access_application" "warrior" {
 
   policies = [
     {
-      id         = cloudflare_zero_trust_access_policy.warrior_allow_toof.id
+      id         = cloudflare_zero_trust_access_policy.allow_toof.id
       precedence = 1
     }
   ]
@@ -36,7 +36,7 @@ resource "cloudflare_zero_trust_access_application" "argocd" {
 
   policies = [
     {
-      id         = cloudflare_zero_trust_access_policy.warrior_allow_toof.id
+      id         = cloudflare_zero_trust_access_policy.allow_toof.id
       precedence = 1
     }
   ]
