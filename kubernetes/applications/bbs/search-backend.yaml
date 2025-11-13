@@ -21,7 +21,7 @@ spec:
           containerPort: 3000
         envFrom:
         - secretRef:
-            name: database-secret
+            name: postgres-secret
 ---
 apiVersion: v1
 kind: Service

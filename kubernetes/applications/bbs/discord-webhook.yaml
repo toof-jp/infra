@@ -18,6 +18,6 @@ spec:
         image: ghcr.io/toof-jp/discord-webhook:sha-4319bdc
         envFrom:
         - secretRef:
-            name: database-secret
+            name: postgres-secret
         - secretRef:
             name: discord-webhook-secret
