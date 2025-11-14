@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:18
+        image: ghcr.io/toof-jp/postgres-bigm:sha-2621aff
         ports:
         - containerPort: 5432
           name: postgres
