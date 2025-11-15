@@ -28,9 +28,9 @@ spec:
         - name: DOWNLOADER
           value: toof-jp
         - name: SELECTED_PROJECT
-          value: auto
+          value: gooblog
         - name: CONCURRENT_ITEMS
-          value: "3" # default
+          value: "6"
       nodeSelector:
         kubernetes.io/arch: amd64
 ---
