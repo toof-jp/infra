@@ -1,3 +1,4 @@
+// Some DNS records are managed externally by the cloudflare-tunnel-ingress-controller and Cloudflare Workers.
 resource "cloudflare_zone" "toof_jp" {
   account = {
     id = var.account_id
@@ -84,22 +85,6 @@ resource "cloudflare_dns_record" "portfolio_cname" {
   type    = "CNAME"
   ttl     = 60
   content = "portfolio-c1v.pages.dev"
-}
-
-resource "cloudflare_dns_record" "shisha_cname" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "shisha.toof.jp"
-  type    = "CNAME"
-  ttl     = 60
-  content = "ddnkqwv6246p7.cloudfront.net."
-}
-
-resource "cloudflare_dns_record" "shisha_a" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "api.shisha.toof.jp"
-  type    = "A"
-  ttl     = 60
-  content = "18.179.70.217"
 }
 
 resource "cloudflare_dns_record" "root_mx_1" {
