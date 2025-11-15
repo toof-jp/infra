@@ -1,0 +1,99 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shisha-log
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shisha-log
+  namespace: shisha-log
+spec:
+  selector:
+    matchLabels:
+      app: shisha-log
+  template:
+    metadata:
+      labels:
+        app: shisha-log
+    spec:
+      containers:
+      - name: shisha-log
+        image: ghcr.io/toof-jp/shisha-log-backend:sha-d0403e1
+        ports:
+        - name: http
+          containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: ENVIRONMENT
+          value: production
+        - name: TOKEN_DURATION
+          value: 24h
+        - name: ALLOWED_ORIGINS
+          value: http://localhost:5173,https://localhost:5173,https://shisha.toof.jp
+        envFrom:
+        - secretRef:
+            name: shisha-log-secret
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: shisha-log-external-secret
+  namespace: shisha-log
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: shisha-log-secret
+  data:
+  - secretKey: SUPABASE_URL
+    remoteRef:
+      key: shisha-log-supabase-url
+  - secretKey: SUPABASE_ANON_KEY
+    remoteRef:
+      key: shisha-log-supabase-anon-key
+  - secretKey: SUPABASE_SERVICE_ROLE_KEY
+    remoteRef:
+      key: shisha-log-supabase-service-role-key
+  - secretKey: JWT_SECRET
+    remoteRef:
+      key: shisha-log-jwt-secret
+  - secretKey: DATABASE_URL
+    remoteRef:
+      key: shisha-log-database-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shisha-log
+  namespace: shisha-log
+spec:
+  selector:
+    app: shisha-log
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shisha-log
+  namespace: shisha-log
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+  - host: shisha-api.toof.jp
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: shisha-log
+            port:
+              number: 8080

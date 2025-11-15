@@ -1,4 +1,6 @@
-// Some DNS records are managed externally by the cloudflare-tunnel-ingress-controller and Cloudflare Workers.
+# Some DNS records are managed externally by the cloudflare-tunnel-ingress-controller and Cloudflare Workers.
+# For details, refer to the Cloudflare DNS Records dashboard.
+
 resource "cloudflare_zone" "toof_jp" {
   account = {
     id = var.account_id
