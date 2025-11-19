@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: healthcheck
-        image: ghcr.io/toof-jp/healthcheck:sha-7ba6f32
+        image: ghcr.io/toof-jp/healthcheck:sha-dcab9ef
         ports:
         - name: http
           containerPort: 8080
@@ -30,6 +30,26 @@ spec:
             configMapKeyRef:
               name: healthcheck-configmap
               key: message
+        envFrom:
+        - secretRef:
+            name: shisha-log-secret
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: healthcheck-external-secret
+  namespace: healthcheck
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: healthcheck-secret
+  data:
+  - secretKey: SECRET
+    remoteRef:
+      key: healthcheck-secret
 ---
 apiVersion: v1
 kind: Service
