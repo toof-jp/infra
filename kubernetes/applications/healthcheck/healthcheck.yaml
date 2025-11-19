@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: healthcheck
-        image: ghcr.io/toof-jp/healthcheck:sha-dcab9ef
+        image: ghcr.io/toof-jp/healthcheck:sha-de974d5
         ports:
         - name: http
           containerPort: 8080
