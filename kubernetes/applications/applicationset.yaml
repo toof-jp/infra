@@ -1,0 +1,41 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applications
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - name: archiveteam-warrior
+        namespace: archiveteam-warrior
+      - name: argocd
+        namespace: argocd
+      - name: bbs
+        namespace: bbs
+      - name: cloudflare-external-secret
+        namespace: cloudflare
+      - name: external-secrets
+        namespace: external-secrets
+      - name: healthcheck
+        namespace: healthcheck
+      - name: shisha-log
+        namespace: shisha-log
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/toof-jp/infra
+        targetRevision: HEAD
+        path: 'kubernetes/applications/{{name}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
