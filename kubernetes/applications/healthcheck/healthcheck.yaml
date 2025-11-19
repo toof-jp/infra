@@ -32,7 +32,7 @@ spec:
               key: message
         envFrom:
         - secretRef:
-            name: shisha-log-secret
+            name: healthcheck-secret
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
