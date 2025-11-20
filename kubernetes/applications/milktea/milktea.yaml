@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: milktea
-        image: ghcr.io/toof-jp/milktea:sha-c05902c
+        image: ghcr.io/toof-jp/milktea:sha-2e21549
         envFrom:
         - secretRef:
             name: milktea-secret
