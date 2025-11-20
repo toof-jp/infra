@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: milktea
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: milktea
+  namespace: milktea
+spec:
+  selector:
+    matchLabels:
+      app: milktea
+  template:
+    metadata:
+      labels:
+        app: milktea
+    spec:
+      containers:
+      - name: milktea
+        image: ghcr.io/toof-jp/milktea:sha-c05902c
+        envFrom:
+        - secretRef:
+            name: milktea-secret
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: milktea-external-secret
+  namespace: milktea
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: milktea-secret
+  data:
+  - secretKey: WEBHOOK_URL
+    remoteRef:
+      key: milktea-webhook-url

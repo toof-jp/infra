@@ -22,6 +22,10 @@ spec:
         namespace: healthcheck
       - name: shisha-log
         namespace: shisha-log
+      - name: milktea
+        namespace: milktea
+      - name: ghcr-auth
+        namespace: default
   template:
     metadata:
       name: '{{name}}'
