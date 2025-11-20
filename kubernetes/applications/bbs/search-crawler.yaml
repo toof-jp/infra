@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: search-crawler
-        image: ghcr.io/toof-jp/search-crawler:sha-09d6e95
+        image: ghcr.io/toof-jp/search-crawler:sha-ff0e726
         env:
         - name: AWS_REGION
           value: ap-northeast-1
