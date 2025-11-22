@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fetch-post-discord-bot
+  namespace: bbs
+spec:
+  selector:
+    matchLabels:
+      app: fetch-post-discord-bot
+  template:
+    metadata:
+      labels:
+        app: fetch-post-discord-bot
+    spec:
+      containers:
+      - name: fetch-post-discord-bot
+        image: ghcr.io/toof-jp/bbs-fetch-post-discord-bot:sha-683b595
+        env:
+        - name: IMAGE_URL_PREFIX
+          value: https://d3ixutequkdg55.cloudfront.net/
+        envFrom:
+        - secretRef:
+            name: postgres-secret
+        - secretRef:
+            name: fetch-post-discord-bot-secret
