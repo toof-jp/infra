@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: milktea-bot
+  namespace: milktea
+spec:
+  selector:
+    matchLabels:
+      app: milktea-bot
+  template:
+    metadata:
+      labels:
+        app: milktea-bot
+    spec:
+      containers:
+      - name: milktea-bot
+        image: ghcr.io/toof-jp/milktea-bot:sha-aefd93a
+        envFrom:
+        - secretRef:
+            name: milktea-bot-secret
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: milktea-bot-external-secret
+  namespace: milktea
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: milktea-bot-secret
+  data:
+  - secretKey: DISCORD_TOKEN
+    remoteRef:
+      key: milktea-bot-discord-token
