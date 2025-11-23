@@ -24,8 +24,8 @@ spec:
         namespace: shisha-log
       - name: milktea
         namespace: milktea
-      - name: ghcr-auth
-        namespace: default
+      - name: monitoring
+        namespace: monitoring
   template:
     metadata:
       name: '{{name}}'
