@@ -3,7 +3,7 @@
 
 resource "cloudflare_zone" "toof_jp" {
   account = {
-    id = var.account_id
+    id = var.cloudflare_account_id
   }
   name = "toof.jp"
   type = "full"
