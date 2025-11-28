@@ -11,7 +11,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "github" {
 
 resource "cloudflare_zero_trust_access_policy" "allow_github_toof" {
   account_id       = var.cloudflare_account_id
-  name             = "allow-one-email"
+  name             = "allow-github-toof"
   decision         = "allow"
   session_duration = "12h"
 
