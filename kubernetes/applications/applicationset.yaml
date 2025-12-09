@@ -26,6 +26,8 @@ spec:
         namespace: milktea
       - name: monitoring
         namespace: monitoring
+      - name: npm-stats
+        namespace: npm-stats
   template:
     metadata:
       name: '{{name}}'

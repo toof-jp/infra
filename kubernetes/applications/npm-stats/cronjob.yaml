@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: npm-stats
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: npm-stats
+  namespace: npm-stats
+spec:
+  schedule: "@daily"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: npm-stats
+            image: ghcr.io/toof-jp/npm-download-stats-otel-exporter:sha-cad3a89
+            env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.monitoring.svc.cluster.local:4317
+            envFrom:
+            - secretRef:
+                name: npm-stats-secret
+          restartPolicy: OnFailure
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: npm-stats-secret
+  namespace: npm-stats
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: npm-stats-secret
+  data:
+  - secretKey: PACKAGES
+    remoteRef:
+      key: npm-stats-packages-secret
