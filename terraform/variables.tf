@@ -1,3 +1,8 @@
+variable "google_billing_account" {
+  type      = string
+  sensitive = true
+}
+
 variable "cloudflare_account_id" {
   type = string
 }
