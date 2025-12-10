@@ -1,0 +1,93 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    chart: opentelemetry-demo
+    targetRevision: "0.38.6"
+    helm:
+      releaseName: my-otel-demo
+      valuesObject:
+        components:
+          kafka:
+            resources:
+              requests:
+                memory: 1Gi
+              limits:
+                memory: 1Gi
+          ad:
+            resources:
+              requests:
+                memory: 600Mi
+              limits:
+                memory: 600Mi
+          fraud-detection:
+            resources:
+              requests:
+                memory: 600Mi
+              limits:
+                memory: 600Mi
+          frontend-proxy:
+            ingress:
+              enabled: true
+              ingressClassName: cloudflare-tunnel
+              hosts:
+                - host: opentelemetry-demo.toof.jp
+                  paths:
+                    - path: /
+                      pathType: Prefix
+                      port: 8080
+        opentelemetry-collector:
+          config:
+            exporters:
+              otlp/remote:
+                endpoint: otel-collector.monitoring.svc.cluster.local:4317
+                tls:
+                  insecure: true
+            processors:
+              batch: {}
+            service:
+              pipelines:
+                traces:
+                  receivers: [otlp]
+                  processors:
+                    [
+                      memory_limiter,
+                      resourcedetection,
+                      resource,
+                      transform,
+                      batch,
+                    ]
+                  exporters: [otlp, otlp/remote, debug, spanmetrics]
+                metrics:
+                  receivers:
+                    [
+                      httpcheck/frontend-proxy,
+                      nginx,
+                      otlp,
+                      postgresql,
+                      redis,
+                      spanmetrics,
+                    ]
+                  processors:
+                    [memory_limiter, resourcedetection, resource, batch]
+                  exporters: [otlphttp/prometheus, otlp/remote, debug]
+                logs:
+                  receivers: [otlp]
+                  processors:
+                    [memory_limiter, resourcedetection, resource, batch]
+                  exporters: [opensearch, otlp/remote, debug]
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: opentelemetry-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

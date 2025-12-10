@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: monitoring
+data:
+  collector.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      batch: {}
+
+    exporters:
+      debug:
+        verbosity: detailed
+      googlecloud:
+        project: toof-infra
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, googlecloud]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, googlecloud]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, googlecloud]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      containers:
+        - name: otel-collector
+          image: us-docker.pkg.dev/cloud-ops-agents-artifacts/google-cloud-opentelemetry-collector/otelcol-google:0.138.0
+          args: ["--config=/etc/otel/collector.yaml"]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+            - name: sa-key
+              mountPath: /etc/otel-credentials
+              readOnly: true
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+            - name: otlp-http
+              containerPort: 4318
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/otel-credentials/key.json
+      volumes:
+        - name: config
+          configMap:
+            name: otel-collector-config
+            items:
+              - key: collector.yaml
+                path: collector.yaml
+        - name: sa-key
+          secret:
+            secretName: otel-collector-sa-key
+            items:
+              - key: GOOGLE_CREDENTIALS_JSON
+                path: key.json
+            items:
+              - key: GOOGLE_CREDENTIALS_JSON
+                path: key.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  namespace: monitoring
+spec:
+  selector:
+    app: otel-collector
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: otel-collector-sa-key-external-secret
+  namespace: monitoring
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: otel-collector-sa-key
+  data:
+    - secretKey: GOOGLE_CREDENTIALS_JSON
+      remoteRef:
+        key: otel-collector-sa-key
+        decodingStrategy: Base64
