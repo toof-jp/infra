@@ -1,0 +1,11 @@
+{
+  "name": "infra",
+  "version": "1.0.0",
+  "scripts": {
+    "format:check": "prettier --check \"**/*.{yml,yaml}\"",
+    "format:write": "prettier --write \"**/*.{yml,yaml}\""
+  },
+  "devDependencies": {
+    "prettier": "3.7.4"
+  }
+}

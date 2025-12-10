@@ -14,17 +14,17 @@ spec:
         app: search-post-discord-bot
     spec:
       containers:
-      - name: search-post-discord-bot
-        image: ghcr.io/toof-jp/bbs-search-post-discord-bot:sha-8a9c54a
-        env:
-        - name: API_BASE_URL
-          value: http://search-backend:3000
-        - name: DEFAULT_LIMIT
-          value: "5"
-        - name: RUST_LOG
-          value: warn
-        - name: IMAGE_URL_PREFIX
-          value: https://d3ixutequkdg55.cloudfront.net/
-        envFrom:
-        - secretRef:
-            name: search-post-discord-bot-secret
+        - name: search-post-discord-bot
+          image: ghcr.io/toof-jp/bbs-search-post-discord-bot:sha-8a9c54a
+          env:
+            - name: API_BASE_URL
+              value: http://search-backend:3000
+            - name: DEFAULT_LIMIT
+              value: "5"
+            - name: RUST_LOG
+              value: warn
+            - name: IMAGE_URL_PREFIX
+              value: https://d3ixutequkdg55.cloudfront.net/
+          envFrom:
+            - secretRef:
+                name: search-post-discord-bot-secret

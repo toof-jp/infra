@@ -14,14 +14,14 @@ spec:
         app: search-backend
     spec:
       containers:
-      - name: search-backend
-        image: ghcr.io/toof-jp/bbs-search-backend:sha-2f6894e
-        ports:
-        - name: http
-          containerPort: 3000
-        envFrom:
-        - secretRef:
-            name: postgres-secret
+        - name: search-backend
+          image: ghcr.io/toof-jp/bbs-search-backend:sha-2f6894e
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: postgres-secret
 ---
 apiVersion: v1
 kind: Service
@@ -32,9 +32,9 @@ spec:
   selector:
     app: search-backend
   ports:
-  - name: http
-    port: 3000
-    targetPort: 3000
+    - name: http
+      port: 3000
+      targetPort: 3000
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -44,13 +44,13 @@ metadata:
 spec:
   ingressClassName: cloudflare-tunnel
   rules:
-  - host: bbs.toof.jp
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: search-backend
-            port:
-              number: 3000
+    - host: bbs.toof.jp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: search-backend
+                port:
+                  number: 3000

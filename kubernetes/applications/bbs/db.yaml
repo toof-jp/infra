@@ -11,9 +11,9 @@ spec:
   selector:
     app: postgres
   ports:
-  - name: postgres
-    port: 5432
-    targetPort: 5432
+    - name: postgres
+      port: 5432
+      targetPort: 5432
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -32,26 +32,26 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: ghcr.io/toof-jp/postgres-bigm:sha-2621aff
-        ports:
-        - containerPort: 5432
-          name: postgres
-        envFrom:
-        - secretRef:
-            name: postgres-secret
-        volumeMounts:
-        - name: postgres-data
-          mountPath: /var/lib/postgresql
+        - name: postgres
+          image: ghcr.io/toof-jp/postgres-bigm:sha-2621aff
+          ports:
+            - containerPort: 5432
+              name: postgres
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
   volumeClaimTemplates:
-  - metadata:
-      name: postgres-data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -62,7 +62,7 @@ spec:
     storage: 10Gi
   volumeMode: Filesystem
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   hostPath:
@@ -71,8 +71,8 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - zen2
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - zen2
