@@ -1,6 +1,13 @@
 name: terraform fmt
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - '.github/workflows/terraform-fmt.yaml'
   pull_request:
     branches:
       - main
