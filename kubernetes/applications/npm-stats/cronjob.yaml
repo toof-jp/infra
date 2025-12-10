@@ -16,14 +16,14 @@ spec:
       template:
         spec:
           containers:
-          - name: npm-stats
-            image: ghcr.io/toof-jp/npm-download-stats-otel-exporter:sha-cad3a89
-            env:
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://otel-collector.monitoring.svc.cluster.local:4317
-            envFrom:
-            - secretRef:
-                name: npm-stats-secret
+            - name: npm-stats
+              image: ghcr.io/toof-jp/npm-download-stats-otel-exporter:sha-cad3a89
+              env:
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://otel-collector.monitoring.svc.cluster.local:4317
+              envFrom:
+                - secretRef:
+                    name: npm-stats-secret
           restartPolicy: OnFailure
 ---
 apiVersion: external-secrets.io/v1
@@ -39,6 +39,6 @@ spec:
   target:
     name: npm-stats-secret
   data:
-  - secretKey: PACKAGES
-    remoteRef:
-      key: npm-stats-packages-secret
+    - secretKey: PACKAGES
+      remoteRef:
+        key: npm-stats-packages-secret

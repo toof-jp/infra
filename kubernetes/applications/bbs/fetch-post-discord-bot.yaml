@@ -14,13 +14,13 @@ spec:
         app: fetch-post-discord-bot
     spec:
       containers:
-      - name: fetch-post-discord-bot
-        image: ghcr.io/toof-jp/bbs-fetch-post-discord-bot:sha-683b595
-        env:
-        - name: IMAGE_URL_PREFIX
-          value: https://d3ixutequkdg55.cloudfront.net/
-        envFrom:
-        - secretRef:
-            name: postgres-secret
-        - secretRef:
-            name: fetch-post-discord-bot-secret
+        - name: fetch-post-discord-bot
+          image: ghcr.io/toof-jp/bbs-fetch-post-discord-bot:sha-683b595
+          env:
+            - name: IMAGE_URL_PREFIX
+              value: https://d3ixutequkdg55.cloudfront.net/
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+            - secretRef:
+                name: fetch-post-discord-bot-secret

@@ -5,7 +5,7 @@ metadata:
   name: default
   namespace: milktea
 imagePullSecrets:
-- name: ghcr-auth
+  - name: ghcr-auth
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -33,6 +33,6 @@ spec:
             }
           }
   data:
-  - secretKey: pat
-    remoteRef:
-      key: ghcr-pat
+    - secretKey: pat
+      remoteRef:
+        key: ghcr-pat

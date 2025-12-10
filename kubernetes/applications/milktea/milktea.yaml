@@ -19,11 +19,11 @@ spec:
         app: milktea
     spec:
       containers:
-      - name: milktea
-        image: ghcr.io/toof-jp/milktea:sha-8390e94
-        envFrom:
-        - secretRef:
-            name: milktea-secret
+        - name: milktea
+          image: ghcr.io/toof-jp/milktea:sha-8390e94
+          envFrom:
+            - secretRef:
+                name: milktea-secret
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -38,6 +38,6 @@ spec:
   target:
     name: milktea-secret
   data:
-  - secretKey: WEBHOOK_URL
-    remoteRef:
-      key: milktea-webhook-url
+    - secretKey: WEBHOOK_URL
+      remoteRef:
+        key: milktea-webhook-url

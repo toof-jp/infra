@@ -19,22 +19,22 @@ spec:
         app: archiveteam-warrior
     spec:
       containers:
-      - name: archiveteam-warrior
-        image: atdr.meo.ws/archiveteam/warrior-dockerfile:latest
-        ports:
-        - name: http
-          containerPort: 8001
-        env:
-        - name: DOWNLOADER
-          value: toof-jp
-        - name: SELECTED_PROJECT
-          value: auto
-        - name: CONCURRENT_ITEMS
-          value: "3" # default value
-        livenessProbe:
-          httpGet:
-            path: "/info"
-            port: 8001
+        - name: archiveteam-warrior
+          image: atdr.meo.ws/archiveteam/warrior-dockerfile:latest
+          ports:
+            - name: http
+              containerPort: 8001
+          env:
+            - name: DOWNLOADER
+              value: toof-jp
+            - name: SELECTED_PROJECT
+              value: auto
+            - name: CONCURRENT_ITEMS
+              value: "3" # default value
+          livenessProbe:
+            httpGet:
+              path: "/info"
+              port: 8001
       nodeSelector:
         kubernetes.io/arch: amd64
 ---
@@ -47,9 +47,9 @@ spec:
   selector:
     app: archiveteam-warrior
   ports:
-  - name: http
-    port: 8001
-    targetPort: 8001
+    - name: http
+      port: 8001
+      targetPort: 8001
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -59,13 +59,13 @@ metadata:
 spec:
   ingressClassName: cloudflare-tunnel
   rules:
-  - host: warrior.toof.jp
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: archiveteam-warrior
-            port:
-              number: 8001
+    - host: warrior.toof.jp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: archiveteam-warrior
+                port:
+                  number: 8001

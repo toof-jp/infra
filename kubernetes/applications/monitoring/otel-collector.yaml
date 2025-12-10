@@ -84,9 +84,6 @@ spec:
             items:
               - key: GOOGLE_CREDENTIALS_JSON
                 path: key.json
-            items:
-              - key: GOOGLE_CREDENTIALS_JSON
-                path: key.json
 ---
 apiVersion: v1
 kind: Service

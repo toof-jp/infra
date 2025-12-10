@@ -14,11 +14,11 @@ spec:
         app: milktea-bot
     spec:
       containers:
-      - name: milktea-bot
-        image: ghcr.io/toof-jp/milktea-bot:sha-aefd93a
-        envFrom:
-        - secretRef:
-            name: milktea-bot-secret
+        - name: milktea-bot
+          image: ghcr.io/toof-jp/milktea-bot:sha-aefd93a
+          envFrom:
+            - secretRef:
+                name: milktea-bot-secret
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -33,6 +33,6 @@ spec:
   target:
     name: milktea-bot-secret
   data:
-  - secretKey: DISCORD_TOKEN
-    remoteRef:
-      key: milktea-bot-discord-token
+    - secretKey: DISCORD_TOKEN
+      remoteRef:
+        key: milktea-bot-discord-token

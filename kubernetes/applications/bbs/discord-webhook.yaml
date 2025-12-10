@@ -14,10 +14,10 @@ spec:
         app: discord-webhook
     spec:
       containers:
-      - name: discord-webhook
-        image: ghcr.io/toof-jp/discord-webhook:sha-4319bdc
-        envFrom:
-        - secretRef:
-            name: postgres-secret
-        - secretRef:
-            name: discord-webhook-secret
+        - name: discord-webhook
+          image: ghcr.io/toof-jp/discord-webhook:sha-4319bdc
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+            - secretRef:
+                name: discord-webhook-secret
