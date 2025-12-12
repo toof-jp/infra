@@ -29,4 +29,4 @@ jobs:
         run: terraform init -backend=false -input=false
 
       - name: Terraform Plan
-        run: terraform plan -input=false -lock=false -no-color
+        run: terraform plan -input=false -lock=false -no-color -var-file=dummy_pr.tfvars

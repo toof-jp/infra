@@ -1,0 +1,6 @@
+google_billing_account = "dummy"
+cloudflare_account_id  = "dummy"
+cloudflare_api_token   = "dummy"
+discord_token          = "dummy"
+github_client_id       = "dummy"
+github_client_secret   = "dummy"
