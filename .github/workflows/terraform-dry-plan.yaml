@@ -15,6 +15,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    env:
+      GOOGLE_CREDENTIALS: '{"type":"authorized_user","client_id":"dummy.apps.googleusercontent.com","client_secret":"dummy","refresh_token":"dummy"}'
     defaults:
       run:
         working-directory: terraform
@@ -29,4 +31,4 @@ jobs:
         run: terraform init -backend=false -input=false
 
       - name: Terraform Plan
-        run: terraform plan -input=false -lock=false -no-color -var-file=dummy_pr.tfvars
+        run: terraform plan -input=false -lock=false -no-color -refresh=false -var-file=dummy_pr.tfvars
