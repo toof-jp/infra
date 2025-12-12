@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths:
-      - '**/*.tf'
-      - '**/*.tfvars'
-      - '.github/workflows/terraform-dry-plan.yaml'
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - ".github/workflows/terraform-dry-plan.yaml"
 
 jobs:
   plan:
