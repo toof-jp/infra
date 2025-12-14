@@ -39,6 +39,7 @@ jobs:
         env:
           OP_ENV_FILE: ./terraform/.env.template
           R2_ENDPOINT: op://infra/terraform/remote_state_r2_s3_endpoint
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
