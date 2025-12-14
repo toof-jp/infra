@@ -18,8 +18,8 @@ jobs:
     permissions:
       contents: read
     env:
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      TF_CLI_ARGS_apply: -auto-approve
+      AWS_REGION: auto
+      AWS_DEFAULT_REGION: auto
     defaults:
       run:
         working-directory: terraform
@@ -27,23 +27,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
-      - name: Setup 1Password CLI
-        uses: 1password/install-cli-action@f5d505685ccf986ef535da41cd180792c8ac3a36 # v2.0.1
+      - name: Configure 1Password Service Account
+        uses: 1password/load-secrets-action/configure@13f58eec611f8e5db52ec16247f58c508398f3e6 # v3.0.0
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - name: Load Terraform Secrets
+        uses: 1password/load-secrets-action@13f58eec611f8e5db52ec16247f58c508398f3e6 # v3.0.0
+        with:
+          export-env: true
+        env:
+          OP_ENV_FILE: ./terraform/.env.template
+          R2_ENDPOINT: op://infra/terraform/remote_state_r2_s3_endpoint
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
 
       - name: Terraform Init
-        run: |
-          set -euo pipefail
-          R2_ENDPOINT=$(op read "op://infra/terraform/remote_state_r2_s3_endpoint")
-          AWS_REGION=auto AWS_DEFAULT_REGION=auto \
-          op run --env-file=.env.template -- \
-            terraform init -reconfigure -backend-config="endpoints={\"s3\":\"${R2_ENDPOINT}\"}" -input=false
+        run: terraform init -reconfigure -backend-config="endpoints={\"s3\":\"${R2_ENDPOINT}\"}" -input=false
 
       - name: Terraform Apply
-        run: |
-          set -euo pipefail
-          AWS_REGION=auto AWS_DEFAULT_REGION=auto \
-          op run --env-file=.env.template -- \
-            terraform apply -auto-approve
+        run: terraform apply -auto-approve
