@@ -34,7 +34,16 @@ jobs:
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
 
       - name: Terraform Init
-        run: make init
+        run: |
+          set -euo pipefail
+          R2_ENDPOINT=$(op read "op://infra/terraform/remote_state_r2_s3_endpoint")
+          AWS_REGION=auto AWS_DEFAULT_REGION=auto \
+          op run --env-file=.env.template -- \
+            terraform init -reconfigure -backend-config="endpoints={\"s3\":\"${R2_ENDPOINT}\"}" -input=false
 
       - name: Terraform Apply
-        run: make apply
+        run: |
+          set -euo pipefail
+          AWS_REGION=auto AWS_DEFAULT_REGION=auto \
+          op run --env-file=.env.template -- \
+            terraform apply -auto-approve
