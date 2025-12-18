@@ -18,7 +18,7 @@ spec:
 apiVersion: config.terraform.padok.cloud/v1alpha1
 kind: TerraformLayer
 metadata:
-  name: infra-layzer
+  name: infra-layer
   namespace: burrito-project
 spec:
   branch: main
