@@ -4,11 +4,7 @@ resource "cloudflare_zero_trust_access_identity_provider" "github" {
   type       = "github"
 
   config = {
-    client_id     = var.github_client_id
-    client_secret = var.github_client_secret
-  }
-}
-
+    client_id     = var.github_client_id client_secret = var.github_client_secret } }
 resource "cloudflare_zero_trust_access_policy" "allow_github_toof" {
   account_id       = var.cloudflare_account_id
   name             = "allow-github-toof"
@@ -104,6 +100,25 @@ resource "cloudflare_zero_trust_access_application" "burrito" {
   account_id       = var.cloudflare_account_id
   name             = "burrito"
   domain           = "burrito.toof.jp"
+  type             = "self_hosted"
+  session_duration = "24h"
+
+  allowed_idps = [
+    cloudflare_zero_trust_access_identity_provider.github.id
+  ]
+
+  policies = [
+    {
+      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
+      precedence = 1
+    }
+  ]
+}
+
+resource "cloudflare_zero_trust_access_application" "hoge" {
+  account_id       = var.cloudflare_account_id
+  name             = "hoge"
+  domain           = "hoge.toof.jp"
   type             = "self_hosted"
   session_duration = "24h"
 
