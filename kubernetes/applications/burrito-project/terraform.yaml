@@ -1,0 +1,25 @@
+---
+apiVersion: config.terraform.padok.cloud/v1alpha1
+kind: TerraformRepository
+metadata:
+  name: infra-repository
+  namespace: burrito-project
+spec:
+  repository:
+    url: https://github.com/toof-jp/infra
+  terraform:
+    enabled: true
+---
+apiVersion: config.terraform.padok.cloud/v1alpha1
+kind: TerraformLayer
+metadata:
+  name: infra-layzer
+  namespace: burrito-project
+spec:
+  branch: main
+  path: terraform
+  remediationStrategy:
+    autoApply: false
+  repository:
+    name: infra-repository
+    namespace: burrito-project
