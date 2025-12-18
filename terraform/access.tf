@@ -99,3 +99,22 @@ resource "cloudflare_zero_trust_access_application" "opentelemetry_demo" {
     }
   ]
 }
+
+resource "cloudflare_zero_trust_access_application" "burrito" {
+  account_id       = var.cloudflare_account_id
+  name             = "burrito"
+  domain           = "burrito.toof.jp"
+  type             = "self_hosted"
+  session_duration = "24h"
+
+  allowed_idps = [
+    cloudflare_zero_trust_access_identity_provider.github.id
+  ]
+
+  policies = [
+    {
+      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
+      precedence = 1
+    }
+  ]
+}
