@@ -4,7 +4,11 @@ resource "cloudflare_zero_trust_access_identity_provider" "github" {
   type       = "github"
 
   config = {
-    client_id     = var.github_client_id client_secret = var.github_client_secret } }
+    client_id     = var.github_client_id
+    client_secret = var.github_client_secret
+  }
+}
+
 resource "cloudflare_zero_trust_access_policy" "allow_github_toof" {
   account_id       = var.cloudflare_account_id
   name             = "allow-github-toof"
