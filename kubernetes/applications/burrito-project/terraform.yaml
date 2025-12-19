@@ -1,9 +1,4 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: burrito-project
----
 apiVersion: config.terraform.padok.cloud/v1alpha1
 kind: TerraformRepository
 metadata:
@@ -32,11 +27,6 @@ spec:
     envFrom:
       - secretRef:
           name: terraform-secret
-    initContainers:
-      - name: init-runner
-        envFrom:
-          - secretRef:
-              name: terraform-secret
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
