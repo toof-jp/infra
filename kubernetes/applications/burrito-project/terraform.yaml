@@ -19,7 +19,9 @@ spec:
   branch: main
   path: terraform
   remediationStrategy:
-    autoApply: false
+    autoApply: true
+    onError:
+      maxRetries: 3
   repository:
     name: infra-repository
     namespace: burrito-project
