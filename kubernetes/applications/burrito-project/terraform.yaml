@@ -27,6 +27,20 @@ spec:
     envFrom:
       - secretRef:
           name: terraform-secret
+    env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /var/secrets/gcp/key.json
+    volumeMounts:
+      - name: terraform-sa-key
+        mountPath: /var/secrets/gcp
+        readOnly: true
+    volumes:
+      - name: terraform-sa-key
+        secret:
+          secretName: terraform-sa-key
+          items:
+            - key: GOOGLE_CREDENTIALS_JSON
+              path: key.json
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -65,3 +79,21 @@ spec:
     - secretKey: TF_VAR_github_client_secret
       remoteRef:
         key: terraform/github_client_secret
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: terraform-sa-key
+  namespace: burrito-project
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: terraform-sa-key
+  data:
+    - secretKey: GOOGLE_CREDENTIALS_JSON
+      remoteRef:
+        key: terraform-service-account-key
+        decodingStrategy: Base64
