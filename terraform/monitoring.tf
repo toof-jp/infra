@@ -29,10 +29,6 @@ resource "google_monitoring_uptime_check_config" "healthcheck_http" {
   ]
 }
 
-resource "random_id" "discord_webhook_token" {
-  byte_length = 16
-}
-
 resource "google_monitoring_notification_channel" "discord_webhook" {
   display_name = "Discord Webhook Notifications"
   type         = "webhook_tokenauth"
@@ -40,10 +36,6 @@ resource "google_monitoring_notification_channel" "discord_webhook" {
 
   labels = {
     url = discord_webhook.webhook.url
-  }
-
-  sensitive_labels {
-    auth_token = random_id.discord_webhook_token.hex
   }
 }
 
