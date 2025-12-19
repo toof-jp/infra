@@ -13,6 +13,17 @@ spec:
     helm:
       releaseName: burrito
       valuesObject:
+        config:
+          burrito:
+            datastore:
+              storage:
+                mock: true
+        tenants:
+          - namespace:
+              create: true
+              name: burrito-project
+            serviceAccounts:
+              - name: runner-project
         server:
           ingress:
             enabled: true

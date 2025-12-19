@@ -5,6 +5,11 @@ terraform {
       version = "~> 5"
     }
 
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5"
+    }
+
     google = {
       source  = "hashicorp/google"
       version = "~> 7"
@@ -17,21 +22,28 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "terraform-remote-state"
-    key    = "terraform.tfstate"
-    region = "auto"
-
-    # R2 endpoint is supplied via -backend-config (endpoints.s3) at init time; see Makefile.
-    use_path_style              = false
-    skip_credentials_validation = true
-    skip_region_validation      = true
-    skip_metadata_api_check     = true
-    skip_requesting_account_id  = true
+    bucket  = "toof-infra-terraform-remote-state"
+    key     = "terraform.tfstate"
+    region  = "ap-northeast-1"
+    encrypt = true
+    assume_role = {
+      role_arn     = "arn:aws:iam::571600847070:role/terraform-management"
+      session_name = "terraform"
+    }
   }
 }
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
+}
+
+provider "aws" {
+  region = "ap-northeast-1"
+
+  assume_role {
+    role_arn     = "arn:aws:iam::571600847070:role/terraform-management"
+    session_name = "terraform"
+  }
 }
 
 provider "google" {
