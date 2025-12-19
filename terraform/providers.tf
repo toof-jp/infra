@@ -19,6 +19,11 @@ terraform {
       source  = "Lucky3028/discord"
       version = "~> 2"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3"
+    }
   }
 
   backend "s3" {
