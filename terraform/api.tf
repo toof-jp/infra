@@ -2,6 +2,10 @@ resource "google_project_service" "monitoring" {
   service = "monitoring.googleapis.com"
 }
 
+resource "google_project_service" "serviceusage" {
+  service = "serviceusage.googleapis.com"
+}
+
 resource "google_project_service" "cloudresourcemanager" {
   service = "cloudresourcemanager.googleapis.com"
 }
