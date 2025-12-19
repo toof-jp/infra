@@ -1,6 +1,6 @@
 resource "cloudflare_zero_trust_access_identity_provider" "github" {
   account_id = var.cloudflare_account_id
-  name       = "GitHub"
+  name       = "GitHub only for toof-jp"
   type       = "github"
 
   config = {
