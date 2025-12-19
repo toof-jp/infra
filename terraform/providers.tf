@@ -22,9 +22,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "toof-infra-terraform-remote-state"
-    key    = "terraform.tfstate"
-    region = "ap-northeast-1"
+    bucket  = "toof-infra-terraform-remote-state"
+    key     = "terraform.tfstate"
+    region  = "ap-northeast-1"
     encrypt = true
     assume_role = {
       role_arn     = "arn:aws:iam::571600847070:role/terraform-management"
