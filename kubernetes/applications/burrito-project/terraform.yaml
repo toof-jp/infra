@@ -29,6 +29,9 @@ spec:
     name: infra-repository
     namespace: burrito-project
   overrideRunnerSpec:
+    envFrom:
+      - secretRef:
+          name: terraform-secret
     initContainers:
       - name: init-runner
         envFrom:
