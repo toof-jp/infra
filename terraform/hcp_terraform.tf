@@ -1,5 +1,11 @@
+resource "tfe_organization" "infra" {
+  name  = "toof-infra"
+  email = var.tfe_email
+}
+
 resource "tfe_workspace" "infra" {
-  name = "toof-infra"
+  name         = "toof-infra"
+  organization = tfe_organization.infra.name
 }
 
 locals {
@@ -27,6 +33,10 @@ locals {
     github_client_secret = {
       value     = var.github_client_secret
       sensitive = true
+    }
+    email = {
+      value     = var.tfe_email
+      sensitive = false
     }
   }
 }
