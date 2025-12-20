@@ -81,6 +81,12 @@ spec:
     - secretKey: TF_VAR_github_client_secret
       remoteRef:
         key: terraform/github_client_secret
+    - secretKey: TF_VAR_tfe_email
+      remoteRef:
+        key: terraform/tfe_email
+    - secretKey: TF_VAR_tfe_oauth_token_id
+      remoteRef:
+        key: terraform/tfe_oauth_token_id
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
