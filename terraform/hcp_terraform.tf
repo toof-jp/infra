@@ -1,14 +1,14 @@
 data "google_secret_manager_secret_version" "aws_access_key_id" {
-  project = google_project.toof_infra.project_id
-  secret  = "aws_access_key_id"
-  version = "latest"
+  project    = google_project.toof_infra.project_id
+  secret     = "aws_access_key_id"
+  version    = "latest"
   depends_on = [google_project_service.secretmanager]
 }
 
 data "google_secret_manager_secret_version" "aws_secret_access_key" {
-  project = google_project.toof_infra.project_id
-  secret  = "aws_secret_access_key"
-  version = "latest"
+  project    = google_project.toof_infra.project_id
+  secret     = "aws_secret_access_key"
+  version    = "latest"
   depends_on = [google_project_service.secretmanager]
 }
 
