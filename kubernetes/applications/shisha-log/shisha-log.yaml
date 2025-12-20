@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: shisha-log
-          image: ghcr.io/toof-jp/shisha-log-backend:sha-a50dd22
+          image: ghcr.io/toof-jp/shisha-log-backend:sha-061d8e3
           ports:
             - name: http
               containerPort: 8080
