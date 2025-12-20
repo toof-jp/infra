@@ -62,11 +62,6 @@ resource "google_monitoring_alert_policy" "healthcheck_http_down" {
       threshold_value = 1
       duration        = "120s"
 
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_MEAN"
-      }
-
       trigger {
         count = 1
       }
