@@ -28,8 +28,6 @@ spec:
             namespace: monitoring
           - name: npm-stats
             namespace: npm-stats
-          - name: burrito-project
-            namespace: burrito-project
   template:
     metadata:
       name: "{{name}}"
