@@ -34,6 +34,12 @@ resource "google_project_iam_member" "terraform_sa_editor" {
   member  = "serviceAccount:${google_service_account.terraform_sa.email}"
 }
 
+resource "google_project_iam_member" "terraform_sa_secret_accessor" {
+  project = google_project.toof_infra.project_id
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${google_service_account.terraform_sa.email}"
+}
+
 resource "google_service_account_key" "otel_sa_key" {
   service_account_id = google_service_account.otel_sa.name
 }

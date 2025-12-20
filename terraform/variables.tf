@@ -34,3 +34,8 @@ variable "tfe_token" {
 variable "tfe_email" {
   type = string
 }
+
+variable "tfe_oauth_token_id" {
+  type      = string
+  sensitive = true
+}
