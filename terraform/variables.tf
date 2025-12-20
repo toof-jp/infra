@@ -25,3 +25,8 @@ variable "github_client_secret" {
   type      = string
   sensitive = true
 }
+
+variable "tfe_token" {
+  type      = string
+  sensitive = true
+}

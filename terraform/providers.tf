@@ -19,6 +19,15 @@ terraform {
       source  = "Lucky3028/discord"
       version = "~> 2"
     }
+
+    tfe = {
+      source  = "hashicorp/tfe"
+      version = "0.72.0"
+    }
+
+    terraform = {
+      source = "terraform.io/builtin/terraform"
+    }
   }
 
   backend "s3" {
@@ -52,4 +61,8 @@ provider "google" {
 
 provider "discord" {
   token = var.discord_token
+}
+
+provider "tfe" {
+  token = var.tfe_token
 }
