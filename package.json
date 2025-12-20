@@ -2,8 +2,8 @@
   "name": "infra",
   "version": "1.0.0",
   "scripts": {
-    "format:check": "prettier --check \"**/*.{yml,yaml}\"",
-    "format:write": "prettier --write \"**/*.{yml,yaml}\""
+    "format:check": "prettier --check \"**/*.yaml\"",
+    "format:write": "prettier --write \"**/*.yaml\""
   },
   "devDependencies": {
     "prettier": "3.7.4"

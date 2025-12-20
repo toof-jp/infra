@@ -6,11 +6,6 @@ on:
       - "**/*.tf"
       - "**/*.tfvars"
       - ".github/workflows/terraform-fmt.yaml"
-  pull_request:
-    paths:
-      - "**/*.tf"
-      - "**/*.tfvars"
-      - ".github/workflows/terraform-fmt.yaml"
 
 jobs:
   fmt:
