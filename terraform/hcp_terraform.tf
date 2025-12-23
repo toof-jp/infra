@@ -22,6 +22,7 @@ resource "tfe_workspace" "infra" {
   organization      = tfe_organization.infra.name
   working_directory = "terraform"
   queue_all_runs    = true
+  auto_apply        = true
 
   vcs_repo {
     identifier     = "toof-jp/infra"
