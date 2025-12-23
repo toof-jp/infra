@@ -5,7 +5,7 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_secret_manager_secret" "discord_webhook_url" {
-  secret_id = "discord-webhhok-url"
+  secret_id = "discord-webhook-url"
 
   replication {
     auto {}
