@@ -10,7 +10,6 @@ resource "google_service_account" "monitoring_function_deployer" {
 
 resource "google_iam_workload_identity_pool" "github_actions" {
   project                   = google_project.toof_infra.project_id
-  location                  = "global"
   workload_identity_pool_id = "github-actions"
   display_name              = "GitHub Actions"
   description               = "OIDC pool for GitHub Actions workflows"
@@ -19,7 +18,6 @@ resource "google_iam_workload_identity_pool" "github_actions" {
 
 resource "google_iam_workload_identity_pool_provider" "monitoring_function_repo" {
   project                            = google_project.toof_infra.project_id
-  location                           = google_iam_workload_identity_pool.github_actions.location
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_actions.workload_identity_pool_id
   workload_identity_pool_provider_id = "monitoring-function-repo"
   display_name                       = "Workflow identity for ${local.monitoring_function_repo}"
