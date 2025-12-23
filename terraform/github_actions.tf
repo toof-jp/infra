@@ -20,7 +20,7 @@ resource "google_iam_workload_identity_pool_provider" "monitoring_function_repo"
   project                            = google_project.toof_infra.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_actions.workload_identity_pool_id
   workload_identity_pool_provider_id = "monitoring-function-repo"
-  display_name                       = "Workflow identity for Cloud Run functions Repo"
+  display_name                       = "Cloud Run functions repo"
 
   attribute_mapping = {
     "google.subject"       = "assertion.sub"
