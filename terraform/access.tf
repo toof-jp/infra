@@ -100,10 +100,10 @@ resource "cloudflare_zero_trust_access_application" "opentelemetry_demo" {
   ]
 }
 
-resource "cloudflare_zero_trust_access_application" "burrito" {
+resource "cloudflare_zero_trust_access_application" "longhorn" {
   account_id       = var.cloudflare_account_id
-  name             = "burrito"
-  domain           = "burrito.toof.jp"
+  name             = "longhorn"
+  domain           = "longhorn.toof.jp"
   type             = "self_hosted"
   session_duration = "24h"
 

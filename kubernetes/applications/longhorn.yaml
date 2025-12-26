@@ -19,7 +19,7 @@ spec:
             jobEnabled: false
           ingress:
             enabled: true
-            host: longhor.toof.jp
+            host: longhorn.toof.jp
             ingressClassName: cloudflare-tunnel
             path: /
   destination:
