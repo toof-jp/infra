@@ -1,0 +1,19 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mydns-jp-updater
+  namespace: bbs
+spec:
+  schedule: "0 */12 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mydns-jp-updater
+              image: ghcr.io/toof-jp/mydns-jp-updater:sha-80feebc
+              envFrom:
+                - secretRef:
+                    name: mydns-jp-updater-secret
+          restartPolicy: OnFailure
