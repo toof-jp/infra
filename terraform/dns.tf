@@ -130,3 +130,11 @@ resource "cloudflare_dns_record" "root_txt_dmarc" {
   ttl     = 86400
   content = "v=DMARC1; p=reject; rua=mailto:dmarc-reports@toof.jp; aspf=s; adkim=s"
 }
+
+resource "cloudflare_dns_record" "root_txt_atproto" {
+  zone_id = cloudflare_zone.toof_jp.id
+  name    = "_atproto.toof.jp"
+  type    = "TXT"
+  ttl     = 86400
+  content = "did=did:plc:fzeed6j234rni24nk2gr6u53"
+}
