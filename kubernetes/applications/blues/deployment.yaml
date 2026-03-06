@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blues-web
+  namespace: blues
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blues-web
+  template:
+    metadata:
+      labels:
+        app: blues-web
+    spec:
+      containers:
+        - name: blues-web
+          image: ghcr.io/toof-jp/blues-web:sha-45ec8f2
+          ports:
+            - name: http
+              containerPort: 3000

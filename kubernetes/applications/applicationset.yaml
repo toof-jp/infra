@@ -14,6 +14,8 @@ spec:
             namespace: argocd
           - name: bbs
             namespace: bbs
+          - name: blues
+            namespace: blues
           - name: cloudflare-external-secret
             namespace: cloudflare
           - name: external-secrets

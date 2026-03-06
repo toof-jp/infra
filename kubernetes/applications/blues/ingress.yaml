@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blues-web
+  namespace: blues
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+    - host: blues.toof.jp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: blues-web
+                port:
+                  number: 3000
