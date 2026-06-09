@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: fetch-post-discord-bot
-          image: ghcr.io/toof-jp/bbs-fetch-post-discord-bot:sha-683b595
+          image: ghcr.io/toof-jp/bbs-fetch-post-discord-bot:sha-8f9fd09
           env:
             - name: IMAGE_URL_PREFIX
               value: https://d3ixutequkdg55.cloudfront.net/
