@@ -1,0 +1,81 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: obsidian-msp
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: obsidian-msp-git-sync
+  namespace: obsidian-msp
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: obsidian-msp-git-sync
+  data:
+    - secretKey: GITSYNC_REPO
+      remoteRef:
+        key: obsidian-msp-git-repository-url
+    - secretKey: GITSYNC_USERNAME
+      remoteRef:
+        key: obsidian-msp-git-username
+    - secretKey: GITSYNC_PASSWORD
+      remoteRef:
+        key: obsidian-msp-git-token
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: obsidian-msp
+  namespace: obsidian-msp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: obsidian-msp
+  template:
+    metadata:
+      labels:
+        app: obsidian-msp
+    spec:
+      securityContext:
+        fsGroup: 65533
+      containers:
+        - name: mcpvault
+          image: node:24-alpine
+          command:
+            - sh
+            - -c
+          args:
+            - |
+              until [ -e /git/vault ]; do
+                sleep 1
+              done
+              exec npx --yes @bitbonsai/mcpvault@0.11.0 /git/vault
+          stdin: true
+          tty: true
+          volumeMounts:
+            - name: obsidian-vault
+              mountPath: /git
+        - name: git-sync
+          image: registry.k8s.io/git-sync/git-sync:v4.4.2
+          envFrom:
+            - secretRef:
+                name: obsidian-msp-git-sync
+          args:
+            - --ref=HEAD
+            - --root=/git/root
+            - --link=/git/vault
+            - --period=30s
+            - --max-failures=-1
+            - --group-write
+          volumeMounts:
+            - name: obsidian-vault
+              mountPath: /git
+      volumes:
+        - name: obsidian-vault
+          emptyDir: {}
