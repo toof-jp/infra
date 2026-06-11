@@ -30,6 +30,8 @@ spec:
             namespace: monitoring
           - name: npm-stats
             namespace: npm-stats
+          - name: obsidian-msp
+            namespace: obsidian-msp
   template:
     metadata:
       name: "{{name}}"
