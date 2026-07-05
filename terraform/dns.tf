@@ -150,3 +150,13 @@ resource "cloudflare_dns_record" "hana_admin_a" {
   content = "136.68.11.50"
   proxied = false
 }
+
+# hana user-facing site, same IAP-on-Google-LB setup as hana-admin above.
+resource "cloudflare_dns_record" "hana_user_a" {
+  zone_id = cloudflare_zone.toof_jp.id
+  name    = "hana.toof.jp"
+  type    = "A"
+  ttl     = 60
+  content = "8.233.52.20"
+  proxied = false
+}
