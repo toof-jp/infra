@@ -138,3 +138,15 @@ resource "cloudflare_dns_record" "root_txt_atproto" {
   ttl     = 86400
   content = "did=did:plc:fzeed6j234rni24nk2gr6u53"
 }
+
+# hana admin panel, behind IAP on a Google Cloud external HTTPS load balancer.
+# Must stay DNS-only (not proxied): the LB IP needs a Google-managed SSL cert
+# and IAP's own auth, so Cloudflare's proxy would break both.
+resource "cloudflare_dns_record" "hana_admin_a" {
+  zone_id = cloudflare_zone.toof_jp.id
+  name    = "hana-admin.toof.jp"
+  type    = "A"
+  ttl     = 60
+  content = "136.68.11.50"
+  proxied = false
+}
