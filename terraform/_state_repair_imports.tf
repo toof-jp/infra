@@ -89,32 +89,32 @@ import {
 
 import {
   to = cloudflare_zero_trust_access_application.argocd
-  id = "8c528be8bf366ff2bd6c9bde11077120/c892de1f-1539-4075-b31d-514f73fa9860"
+  id = "accounts/8c528be8bf366ff2bd6c9bde11077120/c892de1f-1539-4075-b31d-514f73fa9860"
 }
 
 import {
   to = cloudflare_zero_trust_access_application.kubernetes_dashboard
-  id = "8c528be8bf366ff2bd6c9bde11077120/a6db300c-2004-4c0e-ba59-7157e25beadc"
+  id = "accounts/8c528be8bf366ff2bd6c9bde11077120/a6db300c-2004-4c0e-ba59-7157e25beadc"
 }
 
 import {
   to = cloudflare_zero_trust_access_application.longhorn
-  id = "8c528be8bf366ff2bd6c9bde11077120/9aa64c21-0fa7-45af-98ee-e8e50f1d1938"
+  id = "accounts/8c528be8bf366ff2bd6c9bde11077120/9aa64c21-0fa7-45af-98ee-e8e50f1d1938"
 }
 
 import {
   to = cloudflare_zero_trust_access_application.opentelemetry_demo
-  id = "8c528be8bf366ff2bd6c9bde11077120/46378c16-02a3-4844-823c-151f6a5fb7ea"
+  id = "accounts/8c528be8bf366ff2bd6c9bde11077120/46378c16-02a3-4844-823c-151f6a5fb7ea"
 }
 
 import {
   to = cloudflare_zero_trust_access_application.warrior
-  id = "8c528be8bf366ff2bd6c9bde11077120/db2bb569-bbdc-4427-82cf-7fe5d5350662"
+  id = "accounts/8c528be8bf366ff2bd6c9bde11077120/db2bb569-bbdc-4427-82cf-7fe5d5350662"
 }
 
 import {
   to = cloudflare_zero_trust_access_identity_provider.github
-  id = "8c528be8bf366ff2bd6c9bde11077120/af84c7bc-781d-4ed8-85ae-16a9fe711a03"
+  id = "accounts/8c528be8bf366ff2bd6c9bde11077120/af84c7bc-781d-4ed8-85ae-16a9fe711a03"
 }
 
 import {
