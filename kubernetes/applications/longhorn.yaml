@@ -19,9 +19,9 @@ spec:
             jobEnabled: false
           defaultSettings:
             taintToleration: node-role.kubernetes.io/control-plane=:NoSchedule
-            defaultReplicaCount: 2
+            defaultReplicaCount: 1
           persistence:
-            defaultClassReplicaCount: 2
+            defaultClassReplicaCount: 1
           longhornManager:
             tolerations: &controlPlaneToleration
               - key: node-role.kubernetes.io/control-plane
