@@ -25,6 +25,16 @@ terraform {
       version = "0.78.0"
     }
 
+    auth0 = {
+      source  = "auth0/auth0"
+      version = "~> 1"
+    }
+
+    vultr = {
+      source  = "vultr/vultr"
+      version = "~> 2"
+    }
+
     terraform = {
       source = "terraform.io/builtin/terraform"
     }
@@ -61,4 +71,14 @@ provider "discord" {
 
 provider "tfe" {
   token = var.tfe_token
+}
+
+provider "auth0" {
+  domain        = var.auth0_domain
+  client_id     = var.auth0_client_id
+  client_secret = var.auth0_client_secret
+}
+
+provider "vultr" {
+  api_key = var.vultr_api_key
 }
