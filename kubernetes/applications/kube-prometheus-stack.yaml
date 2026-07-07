@@ -1,0 +1,79 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 87.10.1
+    helm:
+      valuesObject:
+        # No receivers configured yet — enable once alert routing (e.g.
+        # Discord) is decided.
+        alertmanager:
+          enabled: false
+        # kubeadm binds scheduler/controller-manager/etcd metrics to
+        # localhost (etcd: 127.0.0.1:2381), so these targets are
+        # unscrapable without changing the static-pod manifests. Disabled
+        # to avoid permanently-firing "target down" noise.
+        kubeControllerManager:
+          enabled: false
+        kubeScheduler:
+          enabled: false
+        kubeProxy:
+          enabled: false
+        kubeEtcd:
+          enabled: false
+        # The VPS nodes are small and already busy being control planes;
+        # keep the heavy components on zen2. node-exporter still runs on
+        # every node (it must, to report per-node CPU), tolerating the
+        # control-plane taint on the VPSes.
+        prometheusOperator:
+          nodeSelector: &zen2
+            kubernetes.io/hostname: zen2
+        prometheus:
+          prometheusSpec:
+            nodeSelector: *zen2
+            retention: 15d
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: longhorn
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 20Gi
+        kube-state-metrics:
+          nodeSelector: *zen2
+        prometheus-node-exporter:
+          tolerations:
+            - operator: Exists
+        grafana:
+          nodeSelector: *zen2
+          # AuthN happens at the edge: grafana.toof.jp sits behind a
+          # Cloudflare Access application (terraform/access.tf). Grafana's
+          # own login (admin / prom-operator by default) is the second
+          # layer — change it after first login.
+          ingress:
+            enabled: true
+            ingressClassName: cloudflare-tunnel
+            hosts:
+              - grafana.toof.jp
+          grafana.ini:
+            server:
+              root_url: https://grafana.toof.jp
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # The stack's CRDs blow past the client-side-apply annotation limit.
+      - ServerSideApply=true
