@@ -55,9 +55,6 @@ spec:
     - secretKey: SUPABASE_URL
       remoteRef:
         key: shisha-log-supabase-url
-    - secretKey: SUPABASE_ANON_KEY
-      remoteRef:
-        key: shisha-log-supabase-anon-key
     - secretKey: SUPABASE_SERVICE_ROLE_KEY
       remoteRef:
         key: shisha-log-supabase-service-role-key

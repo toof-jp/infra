@@ -1,0 +1,91 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgrest-nginx
+  namespace: shisha-log
+data:
+  nginx.conf: |
+    events {}
+    http {
+      server {
+        listen 8080;
+        location /rest/v1/ {
+          proxy_pass http://127.0.0.1:3000/;
+          proxy_set_header Host $host;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgrest
+  namespace: shisha-log
+spec:
+  selector:
+    matchLabels:
+      app: postgrest
+  template:
+    metadata:
+      labels:
+        app: postgrest
+    spec:
+      containers:
+        - name: postgrest
+          image: postgrest/postgrest:v12.2.3
+          ports:
+            - name: postgrest
+              containerPort: 3000
+          env:
+            - name: PGRST_DB_SCHEMAS
+              value: public
+          envFrom:
+            - secretRef:
+                name: postgrest-secret
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: postgrest-nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgrest
+  namespace: shisha-log
+spec:
+  selector:
+    app: postgrest
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: postgrest-external-secret
+  namespace: shisha-log
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: postgrest-secret
+  data:
+    - secretKey: PGRST_DB_URI
+      remoteRef:
+        key: shisha-log-database-url
+    - secretKey: PGRST_JWT_SECRET
+      remoteRef:
+        key: shisha-log-pgrst-jwt-secret
