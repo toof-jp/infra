@@ -6,6 +6,6 @@
     "format:write": "prettier --write \"**/*.yaml\""
   },
   "devDependencies": {
-    "prettier": "3.7.4"
+    "prettier": "3.9.4"
   }
 }
