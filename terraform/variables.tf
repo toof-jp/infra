@@ -72,5 +72,5 @@ variable "vultr_iso_url" {
 variable "vultr_attach_iso" {
   type        = bool
   description = "Boot the instance from the installer ISO. Set to false after `vultr-install` so the node boots NixOS from disk."
-  default     = true
+  default     = false
 }
