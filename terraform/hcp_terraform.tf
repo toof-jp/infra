@@ -78,6 +78,26 @@ locals {
       value     = var.tfe_oauth_token_id
       sensitive = true
     }
+    auth0_domain = {
+      value     = var.auth0_domain
+      sensitive = false
+    }
+    auth0_client_id = {
+      value     = var.auth0_client_id
+      sensitive = false
+    }
+    auth0_client_secret = {
+      value     = var.auth0_client_secret
+      sensitive = true
+    }
+    domain = {
+      value     = var.domain
+      sensitive = false
+    }
+    vultr_api_key = {
+      value     = var.vultr_api_key
+      sensitive = true
+    }
     AWS_ACCESS_KEY_ID = {
       value     = local.aws_access_key_id_value
       sensitive = true
