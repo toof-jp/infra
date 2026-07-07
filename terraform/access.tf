@@ -65,7 +65,7 @@ resource "cloudflare_zero_trust_access_application" "argocd" {
 resource "cloudflare_zero_trust_access_application" "kubernetes_dashboard" {
   account_id       = var.cloudflare_account_id
   name             = "kubernetes-dashboard"
-  domain           = "kubernetes-dashboard.toof.jp"
+  domain           = "k8s.toof.jp"
   type             = "self_hosted"
   session_duration = "24h"
 
