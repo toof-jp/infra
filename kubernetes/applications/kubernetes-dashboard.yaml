@@ -16,7 +16,7 @@ spec:
           ingress:
             enabled: true
             hosts:
-              - kubernetes-dashboard.toof.jp
+              - k8s.toof.jp
             ingressClassName: cloudflare-tunnel
             useDefaultIngressClass: false
             useDefaultAnnotations: false
