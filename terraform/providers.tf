@@ -22,7 +22,7 @@ terraform {
 
     tfe = {
       source  = "hashicorp/tfe"
-      version = "0.72.0"
+      version = "0.78.0"
     }
 
     auth0 = {
@@ -78,7 +78,6 @@ provider "auth0" {
   client_id     = var.auth0_client_id
   client_secret = var.auth0_client_secret
 }
-
 provider "vultr" {
   api_key = var.vultr_api_key
 }

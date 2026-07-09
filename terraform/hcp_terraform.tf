@@ -97,6 +97,9 @@ locals {
     vultr_api_key = {
       value     = var.vultr_api_key
       sensitive = true
+      # Hand-seeded in the workspace with hcl=false; TFE refuses to flip
+      # the hcl flag on a sensitive variable, so keep managing it as-is.
+      hcl = false
     }
     AWS_ACCESS_KEY_ID = {
       value     = local.aws_access_key_id_value
@@ -134,8 +137,8 @@ resource "tfe_variable" "infra_variables" {
 
   key          = each.key
   category     = lookup(each.value, "category", "terraform")
-  value        = lookup(each.value, "category", "terraform") == "terraform" ? provider::terraform::encode_expr(each.value.value) : tostring(each.value.value)
+  value        = lookup(each.value, "hcl", lookup(each.value, "category", "terraform") == "terraform") ? provider::terraform::encode_expr(each.value.value) : tostring(each.value.value)
   workspace_id = tfe_workspace.infra.id
-  hcl          = lookup(each.value, "category", "terraform") == "terraform"
+  hcl          = lookup(each.value, "hcl", lookup(each.value, "category", "terraform") == "terraform")
   sensitive    = each.value.sensitive
 }

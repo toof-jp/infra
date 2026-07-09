@@ -1,6 +1,85 @@
 # infra
 
+Personal infrastructure monorepo: Kubernetes manifests synced by Argo CD and Terraform configurations for cloud resources.
+
 ## GitOps
 
 - Kubernetes manifests are synced by Argo CD to keep clusters declarative.
 - Terraform automation runs via HCP Terraform; it continuously plans/applies the configurations under `terraform/`.
+
+## Repository layout
+
+```
+.
+├── kubernetes/
+│   ├── app-of-apps.yaml      # Argo CD root Application
+│   └── applications/         # ApplicationSet + per-app manifests
+├── terraform/                # Cloudflare / GCP / AWS / Vultr / Discord resources
+└── docs/                     # Operational notes
+```
+
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph repo["GitHub: toof-jp/infra"]
+        k8sdir["kubernetes/"]
+        tfdir["terraform/"]
+    end
+
+    subgraph cluster["Kubernetes cluster"]
+        argocd["Argo CD"]
+        appofapps["app-of-apps"]
+        appset["ApplicationSet"]
+        apps["Applications<br/>archiveteam-warrior, bbs, blues,<br/>healthcheck, milktea, monitoring,<br/>npm-stats, obsidian-msp, shisha-log, ..."]
+        platform["Platform<br/>longhorn, external-secrets,<br/>cloudflare-tunnel-ingress-controller,<br/>kubernetes-dashboard"]
+        burrito["Burrito<br/>(in-cluster Terraform runner)"]
+    end
+
+    subgraph providers["Cloud providers"]
+        cloudflare["Cloudflare<br/>DNS / Tunnel"]
+        gcp["Google Cloud<br/>Secret Manager / Monitoring /<br/>Cloud Functions"]
+        aws["AWS<br/>S3 (Terraform remote state)"]
+        vultr["Vultr<br/>vultr-vps instance"]
+        discord["Discord<br/>alert webhook"]
+    end
+
+    hcp["HCP Terraform"]
+
+    k8sdir -->|sync| argocd
+    argocd --> appofapps
+    appofapps --> appset
+    appofapps --> platform
+    appset --> apps
+
+    tfdir --> hcp
+    tfdir --> burrito
+    hcp --> providers
+    burrito --> providers
+
+    platform -->|ExternalSecret| gcp
+    platform -->|Ingress| cloudflare
+```
+
+## Kubernetes nodes
+
+All nodes run Kubernetes v1.36 on containerd. Cluster traffic (apiserver, etcd, kubelet) flows over the Tailscale mesh. `zen2` is untainted and runs the workloads; the VPS nodes carry the `control-plane` taint.
+
+```mermaid
+flowchart LR
+    subgraph k8s["Kubernetes cluster (v1.36)"]
+        subgraph home["Home"]
+            zen2["zen2<br/>Arch Linux<br/>16 CPU / 64 GiB<br/>control-plane + worker"]
+        end
+        subgraph sakura["Sakura VPS"]
+            sakuravps["sakura-vps<br/>NixOS<br/>4 CPU / 4 GiB<br/>control-plane (tainted)"]
+        end
+        subgraph vultrcloud["Vultr"]
+            vultrvps["vultr-vps<br/>NixOS<br/>1 CPU / 2 GiB<br/>control-plane (tainted)"]
+        end
+    end
+
+    zen2 <-->|Tailscale| sakuravps
+    zen2 <-->|Tailscale| vultrvps
+    sakuravps <-->|Tailscale| vultrvps
+```

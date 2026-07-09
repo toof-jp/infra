@@ -17,6 +17,20 @@ spec:
         valuesObject:
           preUpgradeChecker:
             jobEnabled: false
+          defaultSettings:
+            taintToleration: node-role.kubernetes.io/control-plane=:NoSchedule
+            defaultReplicaCount: 1
+          persistence:
+            defaultClassReplicaCount: 1
+          longhornManager:
+            tolerations: &controlPlaneToleration
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+                effect: NoSchedule
+          longhornDriver:
+            tolerations: *controlPlaneToleration
+          longhornUI:
+            tolerations: *controlPlaneToleration
           ingress:
             enabled: true
             host: longhorn.toof.jp

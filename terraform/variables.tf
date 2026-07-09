@@ -55,7 +55,6 @@ variable "auth0_client_secret" {
   sensitive   = true
   description = "Auth0 Management API client secret for Terraform."
 }
-
 variable "domain" {
   type        = string
   description = "Base public domain."
@@ -88,5 +87,5 @@ variable "vultr_iso_url" {
 variable "vultr_attach_iso" {
   type        = bool
   description = "Boot the instance from the installer ISO. Set to false after `vultr-install` so the node boots NixOS from disk."
-  default     = true
+  default     = false
 }

@@ -62,10 +62,15 @@ resource "cloudflare_zero_trust_access_application" "argocd" {
   ]
 }
 
-resource "cloudflare_zero_trust_access_application" "kubernetes_dashboard" {
+moved {
+  from = cloudflare_zero_trust_access_application.kubernetes_dashboard
+  to   = cloudflare_zero_trust_access_application.headlamp
+}
+
+resource "cloudflare_zero_trust_access_application" "headlamp" {
   account_id       = var.cloudflare_account_id
-  name             = "kubernetes-dashboard"
-  domain           = "kubernetes-dashboard.toof.jp"
+  name             = "headlamp"
+  domain           = "headlamp.toof.jp"
   type             = "self_hosted"
   session_duration = "24h"
 
@@ -104,6 +109,25 @@ resource "cloudflare_zero_trust_access_application" "longhorn" {
   account_id       = var.cloudflare_account_id
   name             = "longhorn"
   domain           = "longhorn.toof.jp"
+  type             = "self_hosted"
+  session_duration = "24h"
+
+  allowed_idps = [
+    cloudflare_zero_trust_access_identity_provider.github.id
+  ]
+
+  policies = [
+    {
+      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
+      precedence = 1
+    }
+  ]
+}
+
+resource "cloudflare_zero_trust_access_application" "grafana" {
+  account_id       = var.cloudflare_account_id
+  name             = "grafana"
+  domain           = "grafana.toof.jp"
   type             = "self_hosted"
   session_duration = "24h"
 
