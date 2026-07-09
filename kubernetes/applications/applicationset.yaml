@@ -32,6 +32,8 @@ spec:
             namespace: mcp-gate
           - name: npm-stats
             namespace: npm-stats
+          - name: obsidian
+            namespace: obsidian
           - name: obsidian-msp
             namespace: obsidian-msp
   template:
