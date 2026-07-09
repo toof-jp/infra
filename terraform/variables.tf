@@ -40,6 +40,21 @@ variable "tfe_oauth_token_id" {
   sensitive = true
 }
 
+variable "auth0_domain" {
+  type        = string
+  description = "Auth0 tenant domain, e.g. xxx.auth0.com."
+}
+
+variable "auth0_client_id" {
+  type        = string
+  description = "Auth0 Management API client ID for Terraform."
+}
+
+variable "auth0_client_secret" {
+  type        = string
+  sensitive   = true
+  description = "Auth0 Management API client secret for Terraform."
+}
 variable "domain" {
   type        = string
   description = "Base public domain."

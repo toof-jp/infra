@@ -55,9 +55,10 @@ spec:
               until [ -e /git/vault ]; do
                 sleep 1
               done
-              exec npx --yes @bitbonsai/mcpvault@0.11.0 /git/vault
-          stdin: true
-          tty: true
+              exec npx --yes mcp-proxy@6.5.2 --port 3001 -- npx --yes @bitbonsai/mcpvault@0.11.0 /git/vault
+          ports:
+            - name: http-mcp
+              containerPort: 3001
           volumeMounts:
             - name: obsidian-vault
               mountPath: /git

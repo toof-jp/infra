@@ -28,6 +28,8 @@ spec:
             namespace: milktea
           - name: monitoring
             namespace: monitoring
+          - name: mcp-gate
+            namespace: mcp-gate
           - name: npm-stats
             namespace: npm-stats
           - name: obsidian-msp
