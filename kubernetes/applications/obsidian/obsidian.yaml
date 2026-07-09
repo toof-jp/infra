@@ -80,13 +80,15 @@ spec:
               cpu: 250m
               memory: 1Gi
             limits:
-              memory: 2Gi
+              memory: 3Gi
           volumeMounts:
             - name: config
               mountPath: /config
             - name: git-ssh
               mountPath: /config/.ssh
               readOnly: true
+            - name: dshm
+              mountPath: /dev/shm
       volumes:
         - name: config
           persistentVolumeClaim:
@@ -95,6 +97,10 @@ spec:
           secret:
             secretName: obsidian-git-ssh
             defaultMode: 0400
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
 ---
 apiVersion: v1
 kind: Service
