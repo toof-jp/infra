@@ -37,7 +37,7 @@ metadata:
   namespace: mcp-gate
 data:
   LISTEN_ADDR: 0.0.0.0:8080
-  RESOURCE_URI: https://obsidian-mcp.toof.jp
+  RESOURCE_URI: https://obsidian-mcp.toof.jp/
   UPSTREAM_URL: http://obsidian-msp.obsidian-msp.svc.cluster.local:3001
 ---
 apiVersion: apps/v1

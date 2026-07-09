@@ -28,9 +28,12 @@ resource "auth0_client_credentials" "obsidian_mcp" {
   authentication_method = "client_secret_post"
 }
 
+# Claude sends the RFC 8707 resource parameter as the canonical origin URI
+# with a trailing slash; Auth0 matches API identifiers by exact string, so
+# the identifier must carry the slash too.
 resource "auth0_resource_server" "obsidian_mcp" {
   name                 = "obsidian-mcp-api"
-  identifier           = local.obsidian_mcp_url
+  identifier           = "${local.obsidian_mcp_url}/"
   signing_alg          = "RS256"
   allow_offline_access = true
 }

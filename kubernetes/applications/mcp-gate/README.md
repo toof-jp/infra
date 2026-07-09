@@ -14,7 +14,7 @@ Cloudflare Access (Managed OAuth for MCP) cannot front this hostname: the claude
 
 ## Auth0 Manual Settings
 
-- Tenant Settings -> Advanced -> enable **Resource Parameter Compatibility Profile**. The MCP spec (RFC 8707) makes Claude send a `resource` parameter, and without this profile Auth0 ignores it and issues an opaque access token that `mcp-gate` cannot validate. With it enabled, the token is a JWT with `aud` = `https://obsidian-mcp.toof.jp` (the `obsidian-mcp-api` resource server identifier).
+- Tenant Settings -> Advanced -> enable **Resource Parameter Compatibility Profile**. The MCP spec (RFC 8707) makes Claude send a `resource` parameter, and without this profile Auth0 ignores it and issues an opaque access token that `mcp-gate` cannot validate. With it enabled, the token is a JWT with `aud` = `https://obsidian-mcp.toof.jp/` (the `obsidian-mcp-api` resource server identifier — the trailing slash matters, because Claude canonicalizes the resource URI to the origin with a trailing slash and Auth0 matches identifiers by exact string).
 - Enable the Social Connection you want to use, such as Google or GitHub.
 - In the `obsidian-mcp` Auth0 Application, add `https://claude.ai` to Allowed Web Origins.
 
