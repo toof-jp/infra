@@ -55,10 +55,24 @@ spec:
               until [ -e /git/vault ]; do
                 sleep 1
               done
+              readlink -f /git/vault > /tmp/vault-path
               exec npx --yes mcp-proxy@6.5.2 --port 3001 -- npx --yes @bitbonsai/mcpvault@0.11.0 /git/vault
           ports:
             - name: http-mcp
               containerPort: 3001
+          readinessProbe:
+            tcpSocket:
+              port: http-mcp
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - '[ ! -f /tmp/vault-path ] || [ "$(readlink -f /git/vault)" = "$(cat /tmp/vault-path)" ]'
+            initialDelaySeconds: 30
+            periodSeconds: 30
           volumeMounts:
             - name: obsidian-vault
               mountPath: /git
