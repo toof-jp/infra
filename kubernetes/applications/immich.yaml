@@ -43,17 +43,6 @@ spec:
                 existingClaim: immich-library
           valkey:
             enabled: true
-          server:
-            ingress:
-              main:
-                enabled: true
-                className: cloudflare-tunnel
-                hosts:
-                  - host: photo.toof.jp
-                    paths:
-                      - path: /
-                        service:
-                          identifier: main
   destination:
     server: https://kubernetes.default.svc
     namespace: immich
