@@ -11,7 +11,7 @@ resource "google_secret_manager_secret" "discord_webhook_url" {
     auto {}
   }
 
-  depends_on = [google_project_service.secretmanager]
+  depends_on = [google_project_service.enabled["secretmanager.googleapis.com"]]
 }
 
 resource "google_secret_manager_secret_version" "discord_webhook_url" {
@@ -22,7 +22,7 @@ resource "google_secret_manager_secret_version" "discord_webhook_url" {
 resource "google_service_account" "monitoring_function_runtime" {
   account_id   = "monitoring-function-runtime"
   display_name = "Runtime for monitoring notification function"
-  depends_on   = [google_project_service.iam]
+  depends_on   = [google_project_service.enabled["iam.googleapis.com"]]
 }
 
 resource "google_project_iam_member" "monitoring_function_runtime_secret_accessor" {

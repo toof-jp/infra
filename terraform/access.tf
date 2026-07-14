@@ -1,3 +1,15 @@
+locals {
+  zero_trust_apps = [
+    "warrior",
+    "argocd",
+    "headlamp",
+    "opentelemetry-demo",
+    "longhorn",
+    "grafana",
+    "obsidian-gui",
+  ]
+}
+
 resource "cloudflare_zero_trust_access_identity_provider" "github" {
   account_id = var.cloudflare_account_id
   name       = "GitHub only for toof-jp"
@@ -24,29 +36,12 @@ resource "cloudflare_zero_trust_access_policy" "allow_github_toof" {
   ]
 }
 
-resource "cloudflare_zero_trust_access_application" "warrior" {
+resource "cloudflare_zero_trust_access_application" "app" {
+  for_each = toset(local.zero_trust_apps)
+
   account_id       = var.cloudflare_account_id
-  name             = "warrior"
-  domain           = "warrior.toof.jp"
-  type             = "self_hosted"
-  session_duration = "24h"
-
-  allowed_idps = [
-    cloudflare_zero_trust_access_identity_provider.github.id
-  ]
-
-  policies = [
-    {
-      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
-      precedence = 1
-    }
-  ]
-}
-
-resource "cloudflare_zero_trust_access_application" "argocd" {
-  account_id       = var.cloudflare_account_id
-  name             = "argocd"
-  domain           = "argocd.toof.jp"
+  name             = each.key
+  domain           = "${each.key}.${var.domain}"
   type             = "self_hosted"
   session_duration = "24h"
 
@@ -67,97 +62,37 @@ moved {
   to   = cloudflare_zero_trust_access_application.headlamp
 }
 
-resource "cloudflare_zero_trust_access_application" "headlamp" {
-  account_id       = var.cloudflare_account_id
-  name             = "headlamp"
-  domain           = "headlamp.toof.jp"
-  type             = "self_hosted"
-  session_duration = "24h"
-
-  allowed_idps = [
-    cloudflare_zero_trust_access_identity_provider.github.id
-  ]
-
-  policies = [
-    {
-      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
-      precedence = 1
-    }
-  ]
+moved {
+  from = cloudflare_zero_trust_access_application.warrior
+  to   = cloudflare_zero_trust_access_application.app["warrior"]
 }
 
-resource "cloudflare_zero_trust_access_application" "opentelemetry_demo" {
-  account_id       = var.cloudflare_account_id
-  name             = "opentelemetry-demo"
-  domain           = "opentelemetry-demo.toof.jp"
-  type             = "self_hosted"
-  session_duration = "24h"
-
-  allowed_idps = [
-    cloudflare_zero_trust_access_identity_provider.github.id
-  ]
-
-  policies = [
-    {
-      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
-      precedence = 1
-    }
-  ]
+moved {
+  from = cloudflare_zero_trust_access_application.argocd
+  to   = cloudflare_zero_trust_access_application.app["argocd"]
 }
 
-resource "cloudflare_zero_trust_access_application" "longhorn" {
-  account_id       = var.cloudflare_account_id
-  name             = "longhorn"
-  domain           = "longhorn.toof.jp"
-  type             = "self_hosted"
-  session_duration = "24h"
-
-  allowed_idps = [
-    cloudflare_zero_trust_access_identity_provider.github.id
-  ]
-
-  policies = [
-    {
-      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
-      precedence = 1
-    }
-  ]
+moved {
+  from = cloudflare_zero_trust_access_application.headlamp
+  to   = cloudflare_zero_trust_access_application.app["headlamp"]
 }
 
-resource "cloudflare_zero_trust_access_application" "grafana" {
-  account_id       = var.cloudflare_account_id
-  name             = "grafana"
-  domain           = "grafana.toof.jp"
-  type             = "self_hosted"
-  session_duration = "24h"
-
-  allowed_idps = [
-    cloudflare_zero_trust_access_identity_provider.github.id
-  ]
-
-  policies = [
-    {
-      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
-      precedence = 1
-    }
-  ]
+moved {
+  from = cloudflare_zero_trust_access_application.opentelemetry_demo
+  to   = cloudflare_zero_trust_access_application.app["opentelemetry-demo"]
 }
 
-resource "cloudflare_zero_trust_access_application" "obsidian_gui" {
-  account_id       = var.cloudflare_account_id
-  name             = "obsidian-gui"
-  domain           = "obsidian-gui.toof.jp"
-  type             = "self_hosted"
-  session_duration = "24h"
+moved {
+  from = cloudflare_zero_trust_access_application.longhorn
+  to   = cloudflare_zero_trust_access_application.app["longhorn"]
+}
 
-  allowed_idps = [
-    cloudflare_zero_trust_access_identity_provider.github.id
-  ]
+moved {
+  from = cloudflare_zero_trust_access_application.grafana
+  to   = cloudflare_zero_trust_access_application.app["grafana"]
+}
 
-  policies = [
-    {
-      id         = cloudflare_zero_trust_access_policy.allow_github_toof.id
-      precedence = 1
-    }
-  ]
+moved {
+  from = cloudflare_zero_trust_access_application.obsidian_gui
+  to   = cloudflare_zero_trust_access_application.app["obsidian-gui"]
 }

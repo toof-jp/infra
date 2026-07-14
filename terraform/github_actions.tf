@@ -5,7 +5,7 @@ locals {
 resource "google_service_account" "monitoring_function_deployer" {
   account_id   = "monitoring-function-deployer"
   display_name = "Uploads monitoring notification function artifacts"
-  depends_on   = [google_project_service.iam]
+  depends_on   = [google_project_service.enabled["iam.googleapis.com"]]
 }
 
 resource "google_iam_workload_identity_pool" "github_actions" {
@@ -13,7 +13,7 @@ resource "google_iam_workload_identity_pool" "github_actions" {
   workload_identity_pool_id = "github-actions"
   display_name              = "GitHub Actions"
   description               = "OIDC pool for GitHub Actions workflows"
-  depends_on                = [google_project_service.iam]
+  depends_on                = [google_project_service.enabled["iam.googleapis.com"]]
 }
 
 resource "google_iam_workload_identity_pool_provider" "monitoring_function_repo" {
