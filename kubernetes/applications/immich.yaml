@@ -49,7 +49,7 @@ spec:
                 enabled: true
                 className: cloudflare-tunnel
                 hosts:
-                  - host: immich.toof.jp
+                  - host: photo.toof.jp
                     paths:
                       - path: /
                         service:
