@@ -33,7 +33,6 @@ flowchart TB
         appset["ApplicationSet"]
         apps["Applications<br/>archiveteam-warrior, bbs, blues,<br/>healthcheck, milktea, monitoring,<br/>npm-stats, obsidian-msp, shisha-log, ..."]
         platform["Platform<br/>longhorn, external-secrets,<br/>cloudflare-tunnel-ingress-controller,<br/>kubernetes-dashboard"]
-        burrito["Burrito<br/>(in-cluster Terraform runner)"]
     end
 
     subgraph providers["Cloud providers"]
@@ -53,9 +52,7 @@ flowchart TB
     appset --> apps
 
     tfdir --> hcp
-    tfdir --> burrito
     hcp --> providers
-    burrito --> providers
 
     platform -->|ExternalSecret| gcp
     platform -->|Ingress| cloudflare

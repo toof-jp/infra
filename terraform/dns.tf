@@ -1,6 +1,25 @@
 # Some DNS records are managed externally by the cloudflare-tunnel-ingress-controller and Cloudflare Workers.
 # For details, refer to the Cloudflare DNS Records dashboard.
 
+locals {
+  github_pages_ipv4 = [
+    "185.199.108.153",
+    "185.199.109.153",
+    "185.199.110.153",
+    "185.199.111.153",
+  ]
+  github_pages_ipv6 = [
+    "2606:50c0:8000::153",
+    "2606:50c0:8001::153",
+    "2606:50c0:8002::153",
+    "2606:50c0:8003::153",
+  ]
+  titan_mx = {
+    "mx1.titan.email" = 10
+    "mx2.titan.email" = 20
+  }
+}
+
 resource "cloudflare_zone" "toof_jp" {
   account = {
     id = var.cloudflare_account_id
@@ -9,68 +28,24 @@ resource "cloudflare_zone" "toof_jp" {
   type = "full"
 }
 
-resource "cloudflare_dns_record" "root_a_1" {
+resource "cloudflare_dns_record" "root_a" {
+  for_each = toset(local.github_pages_ipv4)
+
   zone_id = cloudflare_zone.toof_jp.id
   name    = "toof.jp"
   type    = "A"
   ttl     = 60
-  content = "185.199.108.153"
+  content = each.key
 }
 
-resource "cloudflare_dns_record" "root_a_2" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "toof.jp"
-  type    = "A"
-  ttl     = 60
-  content = "185.199.109.153"
-}
+resource "cloudflare_dns_record" "root_aaaa" {
+  for_each = toset(local.github_pages_ipv6)
 
-resource "cloudflare_dns_record" "root_a_3" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "toof.jp"
-  type    = "A"
-  ttl     = 60
-  content = "185.199.110.153"
-}
-
-resource "cloudflare_dns_record" "root_a_4" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "toof.jp"
-  type    = "A"
-  ttl     = 60
-  content = "185.199.111.153"
-}
-
-resource "cloudflare_dns_record" "root_aaaa_1" {
   zone_id = cloudflare_zone.toof_jp.id
   name    = "toof.jp"
   type    = "AAAA"
   ttl     = 60
-  content = "2606:50c0:8000::153"
-}
-
-resource "cloudflare_dns_record" "root_aaaa_2" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "toof.jp"
-  type    = "AAAA"
-  ttl     = 60
-  content = "2606:50c0:8001::153"
-}
-
-resource "cloudflare_dns_record" "root_aaaa_3" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "toof.jp"
-  type    = "AAAA"
-  ttl     = 60
-  content = "2606:50c0:8002::153"
-}
-
-resource "cloudflare_dns_record" "root_aaaa_4" {
-  zone_id = cloudflare_zone.toof_jp.id
-  name    = "toof.jp"
-  type    = "AAAA"
-  ttl     = 60
-  content = "2606:50c0:8003::153"
+  content = each.key
 }
 
 resource "cloudflare_dns_record" "s_cname" {
@@ -89,22 +64,15 @@ resource "cloudflare_dns_record" "portfolio_cname" {
   content = "portfolio-c1v.pages.dev"
 }
 
-resource "cloudflare_dns_record" "root_mx_1" {
-  zone_id  = cloudflare_zone.toof_jp.id
-  name     = "toof.jp"
-  type     = "MX"
-  ttl      = 86400
-  priority = 10
-  content  = "mx1.titan.email"
-}
+resource "cloudflare_dns_record" "root_mx" {
+  for_each = local.titan_mx
 
-resource "cloudflare_dns_record" "root_mx_2" {
   zone_id  = cloudflare_zone.toof_jp.id
   name     = "toof.jp"
   type     = "MX"
   ttl      = 86400
-  priority = 20
-  content  = "mx2.titan.email"
+  priority = each.value
+  content  = each.key
 }
 
 resource "cloudflare_dns_record" "root_txt_spf" {
@@ -159,4 +127,54 @@ resource "cloudflare_dns_record" "hana_user_a" {
   ttl     = 60
   content = "8.233.52.20"
   proxied = false
+}
+
+moved {
+  from = cloudflare_dns_record.root_a_1
+  to   = cloudflare_dns_record.root_a["185.199.108.153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_a_2
+  to   = cloudflare_dns_record.root_a["185.199.109.153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_a_3
+  to   = cloudflare_dns_record.root_a["185.199.110.153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_a_4
+  to   = cloudflare_dns_record.root_a["185.199.111.153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_aaaa_1
+  to   = cloudflare_dns_record.root_aaaa["2606:50c0:8000::153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_aaaa_2
+  to   = cloudflare_dns_record.root_aaaa["2606:50c0:8001::153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_aaaa_3
+  to   = cloudflare_dns_record.root_aaaa["2606:50c0:8002::153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_aaaa_4
+  to   = cloudflare_dns_record.root_aaaa["2606:50c0:8003::153"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_mx_1
+  to   = cloudflare_dns_record.root_mx["mx1.titan.email"]
+}
+
+moved {
+  from = cloudflare_dns_record.root_mx_2
+  to   = cloudflare_dns_record.root_mx["mx2.titan.email"]
 }
