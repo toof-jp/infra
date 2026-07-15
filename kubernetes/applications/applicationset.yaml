@@ -16,6 +16,8 @@ spec:
             namespace: bbs
           - name: blues
             namespace: blues
+          - name: cdi
+            namespace: cdi
           - name: cloudflare-external-secret
             namespace: cloudflare
           - name: dev-vm
