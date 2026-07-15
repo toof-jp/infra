@@ -72,33 +72,3 @@ resource "google_secret_manager_secret_version" "terraform_sa_secret_ver" {
   secret      = google_secret_manager_secret.terraform_sa_secret.id
   secret_data = google_service_account_key.terraform_sa_key.private_key
 }
-
-moved {
-  from = google_project_iam_member.sa_monitoring_writer
-  to   = google_project_iam_member.otel_sa["roles/monitoring.metricWriter"]
-}
-
-moved {
-  from = google_project_iam_member.sa_trace_agent
-  to   = google_project_iam_member.otel_sa["roles/cloudtrace.agent"]
-}
-
-moved {
-  from = google_project_iam_member.sa_logging_writer
-  to   = google_project_iam_member.otel_sa["roles/logging.logWriter"]
-}
-
-moved {
-  from = google_project_iam_member.terraform_sa_editor
-  to   = google_project_iam_member.terraform_sa["roles/editor"]
-}
-
-moved {
-  from = google_project_iam_member.terraform_sa_secret_accessor
-  to   = google_project_iam_member.terraform_sa["roles/secretmanager.secretAccessor"]
-}
-
-moved {
-  from = google_project_iam_member.terraform_sa_project_iam_admin
-  to   = google_project_iam_member.terraform_sa["roles/resourcemanager.projectIamAdmin"]
-}
