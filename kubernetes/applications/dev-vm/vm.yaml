@@ -1,0 +1,90 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dev-home
+  namespace: dev-vm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: dev
+  namespace: dev-vm
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: dev
+    spec:
+      # Only zen2 has /dev/kvm
+      nodeSelector:
+        kubernetes.io/hostname: zen2
+      domain:
+        cpu:
+          cores: 4
+        memory:
+          guest: 8Gi
+        devices:
+          disks:
+            - name: root
+              disk:
+                bus: virtio
+            - name: home
+              serial: home # NixOS mounts /dev/disk/by-id/virtio-home at /home
+              disk:
+                bus: virtio
+            - name: cloudinit
+              disk:
+                bus: virtio
+          interfaces:
+            - name: default
+              masquerade: {}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - name: root
+          containerDisk:
+            image: ghcr.io/toof-jp/nixos-dev:main
+        - name: home
+          persistentVolumeClaim:
+            claimName: dev-home
+        - name: cloudinit
+          cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              users:
+                - name: toof
+                  ssh_authorized_keys:
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIHWo3K3cd7yix7fvAkklAl11w+u0u+jYYgFcOsNBmpf
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIN8H2c3Qa2EsEh6RQG6nRoRFblH8fj5dHj9YyVD9tND
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUJhZJJtxQQzpQN23OAInodVNC1VT2ZAWtsyH0bPpVM
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILVxr9QhV4fip8VAil6IZL+WsHtV55GJeD+yRw/8i/WO
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBLZJDizwTJSPK1x4fO9GqrGVdTkG6s80UcX64vBlYDo
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJHEKg+P0OX5pUPHiWOjecgemiZDBRiMjejO/z+oTZQy
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFCD8d8Um1oUDliqkWvgdoOlgBU/+tjxl1GjkTgvSFPv
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrgBC/but8okN4/yhtvHcnhQEJCbE/9qEfdaPt1M6C7
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIxEuii9kpBBeLSh31H8aROCRyJm1GeXtF3mXXZFzJYe
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-ssh
+  namespace: dev-vm
+spec:
+  type: NodePort
+  selector:
+    kubevirt.io/vm: dev
+  ports:
+    - name: ssh
+      port: 22
+      targetPort: 22
+      nodePort: 30022

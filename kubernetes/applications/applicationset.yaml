@@ -18,10 +18,14 @@ spec:
             namespace: blues
           - name: cloudflare-external-secret
             namespace: cloudflare
+          - name: dev-vm
+            namespace: dev-vm
           - name: external-secrets
             namespace: external-secrets
           - name: healthcheck
             namespace: healthcheck
+          - name: kubevirt
+            namespace: kubevirt
           - name: shisha-log
             namespace: shisha-log
           - name: milktea
