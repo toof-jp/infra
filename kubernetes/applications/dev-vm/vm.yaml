@@ -19,6 +19,23 @@ metadata:
   namespace: dev-vm
 spec:
   runStrategy: Always
+  # Root disk is imported once by CDI from GCS (built locally from
+  # toof-jp/dotfiles nix/#kubevirt-image and uploaded); to roll out a new
+  # image, upload it and delete the dev-root DataVolume to re-import.
+  dataVolumeTemplates:
+    - metadata:
+        name: dev-root
+      spec:
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: longhorn
+          resources:
+            requests:
+              storage: 70Gi
+        source:
+          http:
+            url: https://storage.googleapis.com/toof-infra-vm-images/nixos-dev.qcow2
   template:
     metadata:
       labels:
@@ -52,8 +69,8 @@ spec:
           pod: {}
       volumes:
         - name: root
-          containerDisk:
-            image: ghcr.io/toof-jp/nixos-dev:main
+          dataVolume:
+            name: dev-root
         - name: home
           persistentVolumeClaim:
             claimName: dev-home
