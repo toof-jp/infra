@@ -31,7 +31,7 @@ flowchart TB
         argocd["Argo CD"]
         appofapps["app-of-apps"]
         appset["ApplicationSet"]
-        apps["Applications<br/>archiveteam-warrior, bbs, blues,<br/>healthcheck, milktea, monitoring,<br/>npm-stats, obsidian-msp, shisha-log, ..."]
+        apps["Applications<br/>archiveteam-warrior, bbs, blues,<br/>healthcheck, monitoring,<br/>npm-stats, obsidian-msp, shisha-log, ..."]
         platform["Platform<br/>longhorn, external-secrets,<br/>cloudflare-tunnel-ingress-controller,<br/>kubernetes-dashboard"]
     end
 

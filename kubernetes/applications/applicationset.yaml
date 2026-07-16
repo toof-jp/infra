@@ -30,8 +30,6 @@ spec:
             namespace: kubevirt
           - name: shisha-log
             namespace: shisha-log
-          - name: milktea
-            namespace: milktea
           - name: monitoring
             namespace: monitoring
           - name: mcp-gate
