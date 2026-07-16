@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: mcp-server
-          image: ghcr.io/toof-jp/bbs-mcp-server:latest
+          image: ghcr.io/toof-jp/bbs-mcp-server:latest@sha256:9f4c89d097f7db58f77e3866c3796047ae1b1e2fb4eb816c33b5f1025e460dac
           ports:
             - name: http
               containerPort: 8080
