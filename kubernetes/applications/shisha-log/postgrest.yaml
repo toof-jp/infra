@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: postgrest
-          image: postgrest/postgrest:v12.2.3
+          image: postgrest/postgrest:v13.0.8
           ports:
             - name: postgrest
               containerPort: 3000
