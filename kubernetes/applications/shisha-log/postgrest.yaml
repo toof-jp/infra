@@ -44,7 +44,7 @@ spec:
             - secretRef:
                 name: postgrest-secret
         - name: nginx
-          image: nginx:1.27-alpine
+          image: nginx:1.31-alpine
           ports:
             - name: http
               containerPort: 8080
