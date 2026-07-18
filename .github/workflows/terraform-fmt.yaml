@@ -22,3 +22,11 @@ jobs:
 
       - name: Check formatting
         run: terraform fmt -check -diff -recursive
+
+      - name: Init
+        run: terraform init -backend=false -input=false
+        working-directory: terraform
+
+      - name: Validate
+        run: terraform validate
+        working-directory: terraform
