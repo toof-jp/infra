@@ -30,18 +30,18 @@ spec:
             namespace: immich-mcp
           - name: kubevirt
             namespace: kubevirt
-          - name: shisha-log
-            namespace: shisha-log
-          - name: monitoring
-            namespace: monitoring
           - name: mcp-gate
             namespace: mcp-gate
+          - name: monitoring
+            namespace: monitoring
           - name: npm-stats
             namespace: npm-stats
           - name: obsidian
             namespace: obsidian
           - name: obsidian-msp
             namespace: obsidian-msp
+          - name: shisha-log
+            namespace: shisha-log
   template:
     metadata:
       name: "{{name}}"

@@ -10,7 +10,6 @@ spec:
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}
-  # Only zen2 (bare metal) has /dev/kvm; the VPS nodes cannot run VMs
   workloads:
     nodePlacement:
       nodeSelector:
