@@ -47,7 +47,7 @@ spec:
                 name: postgres-secret
           volumeMounts:
             - name: postgres-data
-              mountPath: /var/lib/postgresql
+              mountPath: /var/lib/postgresql/data
             - name: dshm
               mountPath: /dev/shm
       volumes:
