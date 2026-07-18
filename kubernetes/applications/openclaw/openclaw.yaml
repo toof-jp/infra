@@ -45,6 +45,21 @@ spec:
           volumeMounts:
             - name: tools
               mountPath: /tools
+        - name: copy-config
+          image: curlimages/curl:8.14.1
+          command:
+            - sh
+            - -c
+            - >-
+              cp /config-src/openclaw.json /state/openclaw.json &&
+              chmod 664 /state/openclaw.json
+          volumeMounts:
+            - name: config
+              mountPath: /config-src
+              readOnly: true
+            - name: state
+              mountPath: /state
+              subPath: openclaw
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:2026.7.1
@@ -52,8 +67,6 @@ spec:
             - name: http
               containerPort: 18789
           env:
-            - name: OPENCLAW_CONFIG_PATH
-              value: /etc/openclaw/openclaw.json
             - name: PATH
               value: /tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -84,9 +97,6 @@ spec:
             - name: state
               mountPath: /home/node/.config/openclaw
               subPath: config
-            - name: config
-              mountPath: /etc/openclaw
-              readOnly: true
             - name: vertex-sa-key
               mountPath: /var/secrets/google
               readOnly: true
