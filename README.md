@@ -14,7 +14,7 @@ Personal infrastructure monorepo: Kubernetes manifests synced by Argo CD and Ter
 ├── kubernetes/
 │   ├── app-of-apps.yaml      # Argo CD root Application
 │   └── applications/         # ApplicationSet + per-app manifests
-├── terraform/                # Cloudflare / GCP / AWS / Vultr / Discord resources
+├── terraform/                # Cloudflare / GCP / AWS / Vultr / Auth0 / Discord resources
 └── docs/                     # Operational notes
 ```
 
@@ -31,15 +31,16 @@ flowchart TB
         argocd["Argo CD"]
         appofapps["app-of-apps"]
         appset["ApplicationSet"]
-        apps["Applications<br/>archiveteam-warrior, bbs, blues,<br/>healthcheck, monitoring,<br/>npm-stats, obsidian-msp, shisha-log, ..."]
-        platform["Platform<br/>longhorn, external-secrets,<br/>cloudflare-tunnel-ingress-controller,<br/>kubernetes-dashboard"]
+        apps["Applications<br/>archiveteam-warrior, argocd, bbs, blues,<br/>dev-vm, healthcheck, kubevirt, mcp-gate,<br/>milktea, monitoring, npm-stats, obsidian,<br/>obsidian-msp, shisha-log, ..."]
+        platform["Platform (Helm)<br/>longhorn, external-secrets,<br/>cloudflare-tunnel-ingress-controller,<br/>kube-prometheus-stack, metrics-server,<br/>headlamp, immich"]
     end
 
     subgraph providers["Cloud providers"]
-        cloudflare["Cloudflare<br/>DNS / Tunnel"]
+        cloudflare["Cloudflare<br/>DNS / Tunnel / Zero Trust Access"]
         gcp["Google Cloud<br/>Secret Manager / Monitoring /<br/>Cloud Functions"]
         aws["AWS<br/>S3 (Terraform remote state)"]
         vultr["Vultr<br/>vultr-vps instance"]
+        auth0["Auth0<br/>MCP OAuth clients"]
         discord["Discord<br/>alert webhook"]
     end
 
