@@ -5,37 +5,37 @@ metadata:
   name: longhorn
   namespace: argocd
 spec:
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
   project: default
-  sources:
-    - chart: longhorn
-      repoURL: https://charts.longhorn.io/
-      targetRevision: 1.12.0
-      helm:
-        valuesObject:
-          preUpgradeChecker:
-            jobEnabled: false
-          defaultSettings:
-            taintToleration: node-role.kubernetes.io/control-plane=:NoSchedule
-            defaultReplicaCount: 1
-          persistence:
-            defaultClassReplicaCount: 1
-          longhornManager:
-            tolerations: &controlPlaneToleration
-              - key: node-role.kubernetes.io/control-plane
-                operator: Exists
-                effect: NoSchedule
-          longhornDriver:
-            tolerations: *controlPlaneToleration
-          longhornUI:
-            tolerations: *controlPlaneToleration
-          ingress:
-            enabled: true
-            host: longhorn.toof.jp
-            ingressClassName: cloudflare-tunnel
-            path: /
+  source:
+    repoURL: https://charts.longhorn.io/
+    chart: longhorn
+    targetRevision: 1.12.0
+    helm:
+      valuesObject:
+        preUpgradeChecker:
+          jobEnabled: false
+        defaultSettings:
+          taintToleration: node-role.kubernetes.io/control-plane=:NoSchedule
+          defaultReplicaCount: 1
+        persistence:
+          defaultClassReplicaCount: 1
+        longhornManager:
+          tolerations: &controlPlaneToleration
+            - key: node-role.kubernetes.io/control-plane
+              operator: Exists
+              effect: NoSchedule
+        longhornDriver:
+          tolerations: *controlPlaneToleration
+        longhornUI:
+          tolerations: *controlPlaneToleration
+        ingress:
+          enabled: true
+          host: longhorn.toof.jp
+          ingressClassName: cloudflare-tunnel
+          path: /
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
