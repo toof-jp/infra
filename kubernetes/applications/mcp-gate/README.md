@@ -57,3 +57,36 @@ In Claude:
 The gateway points to `http://obsidian-msp.obsidian-msp.svc.cluster.local:3001`.
 
 `@bitbonsai/mcpvault` is a stdio-only MCP server, so the `obsidian-msp` Deployment wraps it with `mcp-proxy`, which serves Streamable HTTP at `/mcp` (and SSE at `/sse`) on port 3001.
+
+## Immich MCP Gateway
+
+`immich.yaml` exposes the Immich MCP endpoint at:
+
+```text
+https://immich-mcp.toof.jp/mcp
+```
+
+The upstream is [barryw/ImmichMCP](https://github.com/barryw/ImmichMCP) running in the `immich-mcp` namespace (`kubernetes/applications/immich-mcp/`), serving Streamable HTTP at `/mcp` on port 5000. ImmichMCP 3.x targets Immich v3 APIs, so the image is pinned to `v0.4.0` until the Immich chart is upgraded past v2.
+
+### Secret Values
+
+Populate the `mcp-gate/immich/*` 1Password items from Terraform outputs:
+
+- `mcp-gate/immich/authorization-server`: `terraform output -raw auth0_obsidian_mcp_issuer`
+- `mcp-gate/immich/jwks-uri`: `terraform output -raw auth0_obsidian_mcp_jwks_uri`
+- `mcp-gate/immich/expected-issuer`: `terraform output -raw auth0_obsidian_mcp_issuer`
+- `mcp-gate/immich/expected-audience`: `terraform output -raw immich_mcp_audience`
+
+The Immich API key comes from GCP Secret Manager (`immich-mcp-api-key`). Create it in Immich (Account Settings -> API Keys) with read-only permissions only; ImmichMCP has no read-only mode, so the key permissions are what enforce it.
+
+### Auth0 Manual Settings
+
+In the `immich-mcp` Auth0 Application, add `https://claude.ai` to Allowed Web Origins. The tenant-wide Resource Parameter Compatibility Profile is already enabled for obsidian-mcp.
+
+### Claude Connector
+
+1. Settings -> Connectors -> Add Custom Connector
+2. Remote MCP server URL: `https://immich-mcp.toof.jp/mcp`
+3. Advanced settings -> OAuth Client ID: `terraform output -raw auth0_immich_mcp_client_id`
+4. Advanced settings -> OAuth Client Secret: `terraform output -raw auth0_immich_mcp_client_secret`
+5. Add, sign in on the Auth0 screen, and finish the connector setup.

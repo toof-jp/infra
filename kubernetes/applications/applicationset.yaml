@@ -26,6 +26,8 @@ spec:
             namespace: external-secrets
           - name: healthcheck
             namespace: healthcheck
+          - name: immich-mcp
+            namespace: immich-mcp
           - name: kubevirt
             namespace: kubevirt
           - name: shisha-log
