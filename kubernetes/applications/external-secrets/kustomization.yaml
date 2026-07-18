@@ -9,8 +9,14 @@ resources:
 helmCharts:
   - name: external-secrets
     repo: https://charts.external-secrets.io
+    version: 1.0.0
     releaseName: external-secrets
     namespace: external-secrets
     includeCRDs: true
     valuesInline:
       installCRDs: true
+patches:
+  - target:
+      kind: CustomResourceDefinition
+      name: ".*\\.external-secrets\\.io"
+    path: crd-ssa-patch.yaml
