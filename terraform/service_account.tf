@@ -5,9 +5,14 @@ locals {
     "roles/logging.logWriter",
   ]
   terraform_sa_roles = [
-    "roles/editor",
-    "roles/secretmanager.secretAccessor",
+    "roles/iam.serviceAccountAdmin",
+    "roles/iam.serviceAccountKeyAdmin",
+    "roles/iam.workloadIdentityPoolAdmin",
+    "roles/monitoring.admin",
     "roles/resourcemanager.projectIamAdmin",
+    "roles/secretmanager.admin",
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/storage.admin",
   ]
 }
 
