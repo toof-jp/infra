@@ -74,8 +74,8 @@ variable "vultr_region" {
 
 variable "vultr_plan" {
   type        = string
-  description = "Vultr plan ID. vhp-1c-2gb-amd = High Performance AMD 1vCPU/2GB."
-  default     = "vhp-1c-2gb-amd"
+  description = "Vultr plan ID. vhp-2c-4gb-amd = High Performance AMD 2vCPU/4GB."
+  default     = "vhp-2c-4gb-amd"
 }
 
 variable "vultr_iso_url" {
