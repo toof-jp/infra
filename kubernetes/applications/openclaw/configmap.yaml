@@ -8,10 +8,21 @@ data:
   openclaw.json: |
     {
       "gateway": {
+        "mode": "local",
         "bind": "lan",
         "port": 18789,
-        "auth": {
-          "token": "${OPENCLAW_GATEWAY_TOKEN}"
+        "controlUi": {
+          "allowedOrigins": ["https://openclaw.toof.jp"]
+        }
+      },
+      "plugins": {
+        "entries": {
+          "discord": {
+            "enabled": true
+          },
+          "anthropic-vertex": {
+            "enabled": true
+          }
         }
       },
       "channels": {
