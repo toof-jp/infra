@@ -1,23 +1,21 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "kubernetes": {
-    "managerFilePatterns": [
-      "/^kubernetes/.+\\.yaml$/"
-    ]
+    "managerFilePatterns": ["/^kubernetes/.+\\.yaml$/"]
   },
   "argocd": {
-    "managerFilePatterns": [
-      "/^kubernetes/applications/.+\\.yaml$/"
-    ]
+    "managerFilePatterns": ["/^kubernetes/applications/.+\\.yaml$/"]
   },
   "packageRules": [
     {
       "matchDatasources": ["docker"],
       "matchCurrentValue": "latest",
       "pinDigests": true
+    },
+    {
+      "matchPackageNames": ["longhorn"],
+      "separateMultipleMinor": true
     }
   ]
 }
