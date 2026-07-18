@@ -81,5 +81,5 @@ List and remove jobs with `cron list` / `cron delete <id>`.
 ## Notes
 
 - The pod runs with a read-only ServiceAccount; the agent can inspect but not mutate the cluster.
-- `openclaw.json` is mounted read-only from the `openclaw-config` ConfigMap (`OPENCLAW_CONFIG_PATH`); edit it via Git, not the Control UI.
+- `openclaw.json` is copied from the `openclaw-config` ConfigMap to the state PVC by an init container on every pod start (OpenClaw needs the config directory writable); edit it via Git, then `kubectl -n openclaw rollout restart deploy/openclaw` to apply.
 - Everything else (sessions, cron store, workspace, auth profiles) persists on the `openclaw-state` PVC.
