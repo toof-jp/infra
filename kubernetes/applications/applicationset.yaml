@@ -10,6 +10,10 @@ spec:
         elements:
           - name: archiveteam-warrior
             namespace: archiveteam-warrior
+          - name: arc-runners
+            namespace: arc-runners
+          - name: arc-systems
+            namespace: arc-systems
           - name: argocd
             namespace: argocd
           - name: bbs

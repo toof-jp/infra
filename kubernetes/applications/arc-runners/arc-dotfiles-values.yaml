@@ -1,0 +1,24 @@
+---
+githubConfigUrl: https://github.com/toof-jp/dotfiles
+githubConfigSecret: arc-dotfiles-github-app
+minRunners: 1
+maxRunners: 1
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-gha-rs-controller
+template:
+  spec:
+    securityContext:
+      fsGroup: 1001
+      fsGroupChangePolicy: OnRootMismatch
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:2.335.1
+        command: ["/home/runner/run.sh"]
+        volumeMounts:
+          - name: nix
+            mountPath: /nix
+    volumes:
+      - name: nix
+        persistentVolumeClaim:
+          claimName: arc-dotfiles-nix
