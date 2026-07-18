@@ -65,10 +65,10 @@ resource "google_project_iam_member" "monitoring_function_deployer_run_admin" {
   member  = "serviceAccount:${google_service_account.monitoring_function_deployer.email}"
 }
 
-resource "google_project_iam_member" "monitoring_function_deployer_secret_accessor" {
-  project = google_project.toof_infra.project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.monitoring_function_deployer.email}"
+resource "google_secret_manager_secret_iam_member" "monitoring_function_deployer_secret_accessor" {
+  secret_id = google_secret_manager_secret.discord_webhook_url.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.monitoring_function_deployer.email}"
 }
 
 resource "google_project_iam_member" "monitoring_function_deployer_sa_user" {

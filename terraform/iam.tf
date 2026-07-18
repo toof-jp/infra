@@ -1,10 +1,85 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  terraform_user_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/terraform"
+  terraform_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-management"
+  terraform_policy_arns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TerraformManagementPolicy",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TerraformUserAssumeRole",
+  ]
+}
+
 data "aws_iam_policy_document" "terraform_management" {
   statement {
-    sid     = "ManageIAM"
-    actions = ["iam:*"]
-    resources = [
-      "*"
+    sid = "ManageTerraformUser"
+    actions = [
+      "iam:CreateUser",
+      "iam:DeleteUser",
+      "iam:GetUser",
+      "iam:ListAttachedUserPolicies",
+      "iam:ListGroupsForUser",
+      "iam:ListUserPolicies",
+      "iam:ListUserTags",
+      "iam:TagUser",
+      "iam:UntagUser",
     ]
+    resources = [local.terraform_user_arn]
+  }
+
+  statement {
+    sid = "ManageTerraformRole"
+    actions = [
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:GetRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
+      "iam:ListRolePolicies",
+      "iam:ListRoleTags",
+      "iam:TagRole",
+      "iam:UntagRole",
+      "iam:UpdateAssumeRolePolicy",
+      "iam:UpdateRole",
+      "iam:UpdateRoleDescription",
+    ]
+    resources = [local.terraform_role_arn]
+  }
+
+  statement {
+    sid = "ManageTerraformPolicies"
+    actions = [
+      "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyTags",
+      "iam:ListPolicyVersions",
+      "iam:SetDefaultPolicyVersion",
+      "iam:TagPolicy",
+      "iam:UntagPolicy",
+    ]
+    resources = local.terraform_policy_arns
+  }
+
+  statement {
+    sid = "AttachManagedTerraformPolicies"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:AttachUserPolicy",
+      "iam:DetachRolePolicy",
+      "iam:DetachUserPolicy",
+    ]
+    resources = [
+      local.terraform_user_arn,
+      local.terraform_role_arn,
+    ]
+    condition {
+      test     = "ArnEquals"
+      variable = "iam:PolicyARN"
+      values   = local.terraform_policy_arns
+    }
   }
 
   statement {

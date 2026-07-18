@@ -25,8 +25,8 @@ resource "google_service_account" "monitoring_function_runtime" {
   depends_on   = [google_project_service.enabled["iam.googleapis.com"]]
 }
 
-resource "google_project_iam_member" "monitoring_function_runtime_secret_accessor" {
-  project = google_project.toof_infra.project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.monitoring_function_runtime.email}"
+resource "google_secret_manager_secret_iam_member" "monitoring_function_runtime_secret_accessor" {
+  secret_id = google_secret_manager_secret.discord_webhook_url.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.monitoring_function_runtime.email}"
 }
