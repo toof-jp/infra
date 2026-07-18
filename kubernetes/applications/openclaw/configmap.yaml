@@ -59,6 +59,7 @@ data:
             "id": "DISCORD_BOT_TOKEN"
           },
           "groupPolicy": "allowlist",
+          "dmPolicy": "disabled",
           "guilds": {
             "1528017016407982250": {
               "requireMention": true,
