@@ -73,7 +73,7 @@ flowchart LR
             sakuravps["sakura-vps<br/>NixOS<br/>4 CPU / 4 GiB<br/>control-plane (tainted)"]
         end
         subgraph vultrcloud["Vultr"]
-            vultrvps["vultr-vps<br/>NixOS<br/>1 CPU / 2 GiB<br/>control-plane (tainted)"]
+            vultrvps["vultr-vps<br/>NixOS<br/>2 CPU / 4 GiB<br/>control-plane (tainted)"]
         end
     end
 
