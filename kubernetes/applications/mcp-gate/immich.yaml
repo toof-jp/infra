@@ -1,0 +1,152 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mcp-gate-immich
+  namespace: mcp-gate
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: 1password-sdk
+    kind: ClusterSecretStore
+  target:
+    name: mcp-gate-immich-secret
+  data:
+    - secretKey: AUTHORIZATION_SERVER
+      remoteRef:
+        key: mcp-gate/immich/authorization-server
+    - secretKey: JWKS_URI
+      remoteRef:
+        key: mcp-gate/immich/jwks-uri
+    - secretKey: EXPECTED_ISSUER
+      remoteRef:
+        key: mcp-gate/immich/expected-issuer
+    - secretKey: EXPECTED_AUDIENCE
+      remoteRef:
+        key: mcp-gate/immich/expected-audience
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-gate-immich-config
+  namespace: mcp-gate
+data:
+  LISTEN_ADDR: 0.0.0.0:8080
+  RESOURCE_URI: https://immich-mcp.toof.jp/
+  UPSTREAM_URL: http://immich-mcp.immich-mcp.svc.cluster.local:5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-gate-immich
+  namespace: mcp-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-gate-immich
+  template:
+    metadata:
+      labels:
+        app: mcp-gate-immich
+    spec:
+      containers:
+        - name: mcp-gate
+          image: cpremus/mcp-gate:0.16.27
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: mcp-gate-immich-config
+            - secretRef:
+                name: mcp-gate-immich-secret
+          readinessProbe:
+            httpGet:
+              path: /.well-known/oauth-protected-resource
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /.well-known/oauth-protected-resource
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-gate-immich
+  namespace: mcp-gate
+spec:
+  selector:
+    app: mcp-gate-immich
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-gate-immich
+  namespace: mcp-gate
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+    - host: immich-mcp.toof.jp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-gate-immich
+                port:
+                  number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mcp-gate-immich
+  namespace: mcp-gate
+spec:
+  podSelector:
+    matchLabels:
+      app: mcp-gate-immich
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cloudflare
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: immich-mcp
+          podSelector:
+            matchLabels:
+              app: immich-mcp
+      ports:
+        - protocol: TCP
+          port: 5000
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
