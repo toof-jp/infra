@@ -27,7 +27,7 @@ data:
       "agents": {
         "defaults": {
           "model": {
-            "primary": "anthropic/claude-sonnet-4-6"
+            "primary": "anthropic-vertex/claude-sonnet-4-6"
           }
         }
       },

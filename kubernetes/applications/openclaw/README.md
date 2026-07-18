@@ -6,12 +6,24 @@
 - Discord: bot connection via `DISCORD_BOT_TOKEN`
 - Cluster access: read-only RBAC (`view` + cluster-scoped read) with `kubectl` installed by an init container
 - Prometheus: `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
+- Model: Claude on Vertex AI (`anthropic-vertex/claude-sonnet-4-6`) via the `openclaw-vertex-sa` service account
+
+## Vertex AI Provider
+
+The agent talks to Claude through Google Vertex AI instead of the Anthropic API. Terraform (`terraform/service_account.tf`, `terraform/api.tf`) provisions everything: enables `aiplatform.googleapis.com`, creates the `openclaw-vertex-sa` service account with `roles/aiplatform.user`, and stores its key in GCP Secret Manager as `openclaw-vertex-sa-key`. The Deployment mounts the key and sets `GOOGLE_APPLICATION_CREDENTIALS`, `GOOGLE_CLOUD_PROJECT`, and `GOOGLE_CLOUD_LOCATION` for ADC.
+
+The official Docker image does not bundle the Vertex provider's dependencies, so install the plugin once after the first deploy (it persists on the state PVC):
+
+```sh
+kubectl -n openclaw exec deploy/openclaw -- \
+  node /app/openclaw.mjs plugin add @openclaw/anthropic-vertex-provider
+kubectl -n openclaw rollout restart deploy/openclaw
+```
 
 ## Secret Values
 
-Create these secrets in GCP Secret Manager (project `toof-infra`):
+Create this secret in GCP Secret Manager (project `toof-infra`):
 
-- `openclaw-anthropic-api-key`: Anthropic API key used by the agent
 - `openclaw-discord-bot-token`: Discord bot token (see below)
 
 The gateway auth token (`OPENCLAW_GATEWAY_TOKEN`) is generated in-cluster by the `password` ClusterGenerator. Read it with:

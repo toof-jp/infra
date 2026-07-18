@@ -56,6 +56,12 @@ spec:
               value: /etc/openclaw/openclaw.json
             - name: PATH
               value: /tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
+            - name: GOOGLE_CLOUD_PROJECT
+              value: toof-infra
+            - name: GOOGLE_CLOUD_LOCATION
+              value: global
           envFrom:
             - secretRef:
                 name: openclaw-secret
@@ -81,6 +87,9 @@ spec:
             - name: config
               mountPath: /etc/openclaw
               readOnly: true
+            - name: vertex-sa-key
+              mountPath: /var/secrets/google
+              readOnly: true
             - name: tools
               mountPath: /tools
       volumes:
@@ -90,6 +99,12 @@ spec:
         - name: config
           configMap:
             name: openclaw-config
+        - name: vertex-sa-key
+          secret:
+            secretName: openclaw-vertex-sa-key
+            items:
+              - key: GOOGLE_CREDENTIALS_JSON
+                path: key.json
         - name: tools
           emptyDir: {}
 ---
