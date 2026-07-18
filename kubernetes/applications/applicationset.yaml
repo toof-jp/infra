@@ -40,6 +40,8 @@ spec:
             namespace: obsidian
           - name: obsidian-msp
             namespace: obsidian-msp
+          - name: openclaw
+            namespace: openclaw
           - name: shisha-log
             namespace: shisha-log
   template:
