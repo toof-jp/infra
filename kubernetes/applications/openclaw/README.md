@@ -14,6 +14,21 @@ The agent talks to Claude through Google Vertex AI instead of the Anthropic API.
 
 The official Docker image does not bundle the Vertex provider, but no manual install is needed: the plugins are declared in `openclaw.json` (`plugins.entries`), and the gateway's startup doctor auto-installs `@openclaw/anthropic-vertex-provider` and `@openclaw/discord` from npm onto the state PVC on first start.
 
+### Known Upstream Issues (as of 2026-07)
+
+- The explicit `models.providers.anthropic-vertex` block in `openclaw.json` (with `apiKey: "gcp-vertex-credentials"`) works around [openclaw#110103](https://github.com/openclaw/openclaw/issues/110103): gateway-routed runs ignore the plugin's implicit catalog and synthetic ADC auth. Do not upgrade to `2026.7.2-beta.*` — the workaround stops working there ("No API key found").
+- The plugin is pinned imperatively on the state PVC to `@openclaw/anthropic-vertex-provider@2026.6.8` because `2026.7.1` breaks Google OAuth ([openclaw#107341](https://github.com/openclaw/openclaw/issues/107341)) and `2026.6.10`/`.11` have a text-output regression ([openclaw#96337](https://github.com/openclaw/openclaw/issues/96337)). Re-pin after a state reset with:
+
+  ```sh
+  kubectl -n openclaw exec deploy/openclaw -- \
+    node /app/openclaw.mjs plugins install @openclaw/anthropic-vertex-provider@2026.6.8 --force
+  kubectl -n openclaw rollout restart deploy/openclaw
+  ```
+
+  Unpin (delete and let the doctor reinstall) once a stable release contains [openclaw#108350](https://github.com/openclaw/openclaw/pull/108350).
+
+- The GCP project needs nonzero Vertex quota for the Claude base model (`GlobalOnlinePrediction*PerBaseModel`, dimension `base_model=anthropic-claude-sonnet-4-6`). Enabling the model in Model Garden is not enough; new projects start at 0 and need an approved quota increase request, or every call fails with 429 `RESOURCE_EXHAUSTED`.
+
 ## Secret Values
 
 Create this secret in GCP Secret Manager (project `toof-infra`):
