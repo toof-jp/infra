@@ -13,8 +13,6 @@ spec:
     helm:
       valuesObject:
         args:
-          # kubeadm kubelets serve self-signed certs; without this the
-          # metrics-server can't scrape any node.
           - --kubelet-insecure-tls
   destination:
     server: https://kubernetes.default.svc

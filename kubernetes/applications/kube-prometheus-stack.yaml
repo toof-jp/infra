@@ -12,14 +12,8 @@ spec:
     targetRevision: 87.17.0
     helm:
       valuesObject:
-        # No receivers configured yet — enable once alert routing (e.g.
-        # Discord) is decided.
         alertmanager:
           enabled: false
-        # kubeadm binds scheduler/controller-manager/etcd metrics to
-        # localhost (etcd: 127.0.0.1:2381), so these targets are
-        # unscrapable without changing the static-pod manifests. Disabled
-        # to avoid permanently-firing "target down" noise.
         kubeControllerManager:
           enabled: false
         kubeScheduler:
@@ -28,10 +22,6 @@ spec:
           enabled: false
         kubeEtcd:
           enabled: false
-        # The VPS nodes are small and already busy being control planes;
-        # keep the heavy components on zen2. node-exporter still runs on
-        # every node (it must, to report per-node CPU), tolerating the
-        # control-plane taint on the VPSes.
         prometheusOperator:
           nodeSelector: &zen2
             kubernetes.io/hostname: zen2
@@ -54,10 +44,6 @@ spec:
             - operator: Exists
         grafana:
           nodeSelector: *zen2
-          # AuthN happens at the edge: grafana.toof.jp sits behind a
-          # Cloudflare Access application (terraform/access.tf). Grafana's
-          # own login (admin / prom-operator by default) is the second
-          # layer — change it after first login.
           ingress:
             enabled: true
             ingressClassName: cloudflare-tunnel
@@ -75,5 +61,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      # The stack's CRDs blow past the client-side-apply annotation limit.
       - ServerSideApply=true

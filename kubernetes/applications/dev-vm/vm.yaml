@@ -19,9 +19,6 @@ metadata:
   namespace: dev-vm
 spec:
   runStrategy: Always
-  # Root disk is imported once by CDI from GCS (built locally from
-  # toof-jp/dotfiles nix/#kubevirt-image and uploaded); to roll out a new
-  # image, upload it and delete the dev-root DataVolume to re-import.
   dataVolumeTemplates:
     - metadata:
         name: dev-root
@@ -41,7 +38,6 @@ spec:
       labels:
         kubevirt.io/vm: dev
     spec:
-      # Only zen2 has /dev/kvm
       nodeSelector:
         kubernetes.io/hostname: zen2
       domain:
@@ -55,7 +51,7 @@ spec:
               disk:
                 bus: virtio
             - name: home
-              serial: home # NixOS mounts /dev/disk/by-id/virtio-home at /home
+              serial: home
               disk:
                 bus: virtio
             - name: cloudinit

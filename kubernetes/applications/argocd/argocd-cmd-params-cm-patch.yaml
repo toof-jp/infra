@@ -4,5 +4,4 @@ kind: ConfigMap
 metadata:
   name: argocd-cmd-params-cm
 data:
-  # Disable Argo CD's built-in TLS so Cloudflare Access can terminate HTTPS
   server.insecure: "true"
