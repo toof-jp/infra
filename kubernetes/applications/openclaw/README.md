@@ -12,13 +12,7 @@
 
 The agent talks to Claude through Google Vertex AI instead of the Anthropic API. Terraform (`terraform/service_account.tf`, `terraform/api.tf`) provisions everything: enables `aiplatform.googleapis.com`, creates the `openclaw-vertex-sa` service account with `roles/aiplatform.user`, and stores its key in GCP Secret Manager as `openclaw-vertex-sa-key`. The Deployment mounts the key and sets `GOOGLE_APPLICATION_CREDENTIALS`, `GOOGLE_CLOUD_PROJECT`, and `GOOGLE_CLOUD_LOCATION` for ADC.
 
-The official Docker image does not bundle the Vertex provider's dependencies, so install the plugin once after the first deploy (it persists on the state PVC):
-
-```sh
-kubectl -n openclaw exec deploy/openclaw -- \
-  node /app/openclaw.mjs plugin add @openclaw/anthropic-vertex-provider
-kubectl -n openclaw rollout restart deploy/openclaw
-```
+The official Docker image does not bundle the Vertex provider, but no manual install is needed: the plugins are declared in `openclaw.json` (`plugins.entries`), and the gateway's startup doctor auto-installs `@openclaw/anthropic-vertex-provider` and `@openclaw/discord` from npm onto the state PVC on first start.
 
 ## Secret Values
 
