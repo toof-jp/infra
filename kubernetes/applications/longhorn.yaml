@@ -17,6 +17,7 @@ spec:
         defaultSettings:
           taintToleration: node-role.kubernetes.io/control-plane=:NoSchedule
           defaultReplicaCount: 1
+          concurrentAutomaticEngineUpgradePerNodeLimit: 1
         persistence:
           defaultClassReplicaCount: 1
         longhornManager:
