@@ -11,3 +11,8 @@ helmCharts:
     releaseName: arc
     namespace: arc-systems
     includeCRDs: true
+patches:
+  - target:
+      kind: CustomResourceDefinition
+      name: ".*\\.actions\\.github\\.com"
+    path: crd-ssa-patch.yaml
