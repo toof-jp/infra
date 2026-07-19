@@ -60,6 +60,20 @@ resource "oci_core_default_security_list" "k8s" {
 
   # SSH is not exposed publicly; access is over Tailscale (same policy as
   # vultr-vps, see vultr.tf).
+  #
+  # TEMPORARY bootstrap exception: neither OCI host runs Tailscale yet, so
+  # the tailscale-only policy from PR #183 locked out all SSH access before
+  # the mesh existed. Keep TCP/22 open until oci-vps has joined the tailnet,
+  # then remove this rule to restore the intended policy.
+  ingress_security_rules {
+    protocol = "6"
+    source   = "0.0.0.0/0"
+
+    tcp_options {
+      min = 22
+      max = 22
+    }
+  }
 
   ingress_security_rules {
     protocol = "1"
