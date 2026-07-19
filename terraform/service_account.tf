@@ -48,10 +48,6 @@ resource "google_service_account_key" "otel_sa_key" {
   service_account_id = google_service_account.otel_sa.name
 }
 
-resource "google_service_account_key" "terraform_sa_key" {
-  service_account_id = google_service_account.terraform_sa.name
-}
-
 resource "google_secret_manager_secret" "otel_sa_secret" {
   secret_id = "otel-collector-sa-key"
   replication {
@@ -63,19 +59,6 @@ resource "google_secret_manager_secret" "otel_sa_secret" {
 resource "google_secret_manager_secret_version" "otel_sa_secret_ver" {
   secret      = google_secret_manager_secret.otel_sa_secret.id
   secret_data = google_service_account_key.otel_sa_key.private_key
-}
-
-resource "google_secret_manager_secret" "terraform_sa_secret" {
-  secret_id = "terraform-service-account-key"
-  replication {
-    auto {}
-  }
-  depends_on = [google_project_service.enabled["secretmanager.googleapis.com"]]
-}
-
-resource "google_secret_manager_secret_version" "terraform_sa_secret_ver" {
-  secret      = google_secret_manager_secret.terraform_sa_secret.id
-  secret_data = google_service_account_key.terraform_sa_key.private_key
 }
 
 resource "google_service_account" "openclaw_vertex_sa" {

@@ -43,6 +43,11 @@ terraform {
     terraform = {
       source = "terraform.io/builtin/terraform"
     }
+
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4"
+    }
   }
 
   cloud {
