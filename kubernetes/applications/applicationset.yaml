@@ -8,6 +8,10 @@ spec:
   generators:
     - list:
         elements:
+          - name: apple-health
+            namespace: apple-health
+          - name: apple-health-mcp
+            namespace: apple-health-mcp
           - name: archiveteam-warrior
             namespace: archiveteam-warrior
           - name: arc-runners
