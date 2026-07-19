@@ -126,15 +126,11 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: migrate
-          image: postgres:18
+          image: postgres:18.4
           command:
-            - psql
-          args:
-            - $(DATABASE_URL)
-            - -v
-            - ON_ERROR_STOP=1
-            - -f
-            - /sql/schema.sql
+            - sh
+            - -c
+            - psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f /sql/schema.sql
           env:
             - name: PGCONNECT_TIMEOUT
               value: "10"
