@@ -8,6 +8,8 @@ controllerServiceAccount:
   name: arc-gha-rs-controller
 template:
   spec:
+    nodeSelector:
+      kubernetes.io/hostname: zen2
     initContainers:
       - name: init-dind-externals
         image: ghcr.io/actions/actions-runner:2.335.1
@@ -48,6 +50,11 @@ template:
             mountPath: /home/runner/externals
           - name: docker-data
             mountPath: /var/lib/docker
+          - name: cgroup
+            mountPath: /sys/fs/cgroup
+          - name: modules
+            mountPath: /lib/modules
+            readOnly: true
     volumes:
       - name: work
         emptyDir: {}
@@ -58,3 +65,11 @@ template:
       - name: docker-data
         persistentVolumeClaim:
           claimName: arc-infra-docker
+      - name: cgroup
+        hostPath:
+          path: /sys/fs/cgroup
+          type: Directory
+      - name: modules
+        hostPath:
+          path: /lib/modules
+          type: Directory
