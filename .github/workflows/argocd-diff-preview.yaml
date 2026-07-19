@@ -47,6 +47,10 @@ jobs:
             -e REPO=${{ github.repository }} \
             dagandersen/argocd-diff-preview:v0.2.11
 
+      # The arc runner image ships without the gh CLI
+      - name: Install gh CLI
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq gh
+
       - name: Post diff as comment
         run: |
           gh pr comment ${{ github.event.number }} --repo ${{ github.repository }} --body-file output/diff.md --edit-last || \
