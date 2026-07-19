@@ -46,6 +46,8 @@ spec:
             namespace: obsidian-msp
           - name: openclaw
             namespace: openclaw
+          - name: palworld
+            namespace: palworld
           - name: shisha-log
             namespace: shisha-log
   template:
