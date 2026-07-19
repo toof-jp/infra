@@ -35,6 +35,11 @@ terraform {
       version = "~> 2"
     }
 
+    oci = {
+      source  = "oracle/oci"
+      version = "~> 8"
+    }
+
     terraform = {
       source = "terraform.io/builtin/terraform"
     }
@@ -80,4 +85,12 @@ provider "auth0" {
 }
 provider "vultr" {
   api_key = var.vultr_api_key
+}
+
+provider "oci" {
+  tenancy_ocid = var.oci_tenancy_ocid
+  user_ocid    = var.oci_user_ocid
+  fingerprint  = var.oci_fingerprint
+  private_key  = var.oci_private_key
+  region       = "ap-osaka-1"
 }

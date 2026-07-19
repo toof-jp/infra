@@ -101,6 +101,25 @@ locals {
       # the hcl flag on a sensitive variable, so keep managing it as-is.
       hcl = false
     }
+    oci_tenancy_ocid = {
+      value     = var.oci_tenancy_ocid
+      sensitive = false
+    }
+    oci_user_ocid = {
+      value     = var.oci_user_ocid
+      sensitive = false
+    }
+    oci_fingerprint = {
+      value     = var.oci_fingerprint
+      sensitive = false
+    }
+    oci_private_key = {
+      value     = var.oci_private_key
+      sensitive = true
+      # Seeded via the TFE API with hcl=false; same constraint as
+      # vultr_api_key above.
+      hcl = false
+    }
     AWS_ACCESS_KEY_ID = {
       value     = local.aws_access_key_id_value
       sensitive = true

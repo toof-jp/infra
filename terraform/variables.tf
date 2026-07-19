@@ -89,3 +89,22 @@ variable "vultr_attach_iso" {
   description = "Boot the instance from the installer ISO. Set to false after `vultr-install` so the node boots NixOS from disk."
   default     = false
 }
+
+variable "oci_tenancy_ocid" {
+  type = string
+}
+
+variable "oci_user_ocid" {
+  type = string
+}
+
+variable "oci_fingerprint" {
+  type        = string
+  description = "Fingerprint of the OCI API signing key."
+}
+
+variable "oci_private_key" {
+  type        = string
+  sensitive   = true
+  description = "PEM private key for OCI API signing."
+}
