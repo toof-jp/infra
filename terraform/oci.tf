@@ -58,19 +58,17 @@ resource "oci_core_default_security_list" "k8s" {
     protocol         = "all"
   }
 
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-
-    tcp_options {
-      min = 22
-      max = 22
-    }
-  }
+  # SSH is not exposed publicly; access is over Tailscale (same policy as
+  # vultr-vps, see vultr.tf).
 
   ingress_security_rules {
     protocol = "1"
     source   = "0.0.0.0/0"
+
+    icmp_options {
+      type = 3
+      code = 4
+    }
   }
 
   ingress_security_rules {

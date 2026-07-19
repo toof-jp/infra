@@ -106,8 +106,8 @@ data "aws_iam_policy_document" "terraform_management" {
       "s3:*"
     ]
     resources = [
-      "arn:aws:s3:::*",
-      "arn:aws:s3:::*/*"
+      "arn:aws:s3:::${aws_s3_bucket.remote_state.bucket}",
+      "arn:aws:s3:::${aws_s3_bucket.remote_state.bucket}/*"
     ]
   }
 }
