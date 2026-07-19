@@ -18,6 +18,8 @@ spec:
             namespace: argocd
           - name: bbs
             namespace: bbs
+          - name: beancount
+            namespace: beancount
           - name: blues
             namespace: blues
           - name: cdi
