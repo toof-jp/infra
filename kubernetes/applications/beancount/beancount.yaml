@@ -10,6 +10,15 @@ spec:
     kind: ClusterSecretStore
   target:
     name: beancount-git-ssh
+    template:
+      engineVersion: v2
+      data:
+        # 1Password SDK strips the trailing newline; OpenSSH refuses a key
+        # without it ("error in libcrypto"), so re-append via block scalar.
+        id_ed25519: |
+          {{ .id_ed25519 }}
+        known_hosts: |
+          {{ .known_hosts }}
   data:
     - secretKey: id_ed25519
       remoteRef:
@@ -33,6 +42,9 @@ spec:
       labels:
         app: fava
     spec:
+      # Prevent the "fava" Service from injecting FAVA_PORT=tcp://... which
+      # collides with the env var the yegle/fava image uses as its port number.
+      enableServiceLinks: false
       securityContext:
         fsGroup: 65533 # git-sync runs as UID 65533; makes the SSH key group-readable
       initContainers:
