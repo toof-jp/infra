@@ -22,12 +22,14 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           path: pull-request
+          persist-credentials: false
 
       - name: Checkout main branch
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: main
           path: main
+          persist-credentials: false
 
       - name: Set Argo CD custom values
         run: |
@@ -48,7 +50,7 @@ jobs:
             -v $(pwd)/values.yaml:/argocd-config/values.yaml \
             -e TARGET_BRANCH=refs/pull/${{ github.event.number }}/merge \
             -e REPO=${{ github.repository }} \
-            dagandersen/argocd-diff-preview:v0.2.11
+            dagandersen/argocd-diff-preview:v0.2.11@sha256:2828dfafbee281436efbfcf0f39ce055351aea9159130c13d771688946406568
 
       # The arc runner image ships without the gh CLI
       - name: Install gh CLI
