@@ -6,7 +6,8 @@
 #   1. make vultr-iso, upload result somewhere Vultr can reach, set
 #      vultr_iso_url
 #   2. apply — instance boots the installer; ssh root@<ip>, run
-#      `vultr-install`
+#      `vultr-install` (the firewall blocks public SSH, so reach the
+#      installer via the Vultr web console or a temporary SSH rule)
 #   3. set vultr_attach_iso = false, apply — detaches the ISO so the
 #      instance boots NixOS from disk
 
@@ -20,29 +21,11 @@ resource "vultr_ssh_key" "toof" {
   ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIN8H2c3Qa2EsEh6RQG6nRoRFblH8fj5dHj9YyVD9tND toof@toof.jp"
 }
 
-# Cluster traffic (apiserver, etcd, kubelet) flows over the Tailscale mesh,
-# so only SSH and Tailscale's WireGuard port are exposed publicly — same
-# policy as sakura-vps's NixOS firewall.
+# Cluster traffic (apiserver, etcd, kubelet) and SSH flow over the Tailscale
+# mesh, so only Tailscale's WireGuard port is exposed publicly. SSH reaches
+# the node via its tailnet address, never the public IP.
 resource "vultr_firewall_group" "k8s_node" {
-  description = "k8s node: ssh + tailscale only"
-}
-
-resource "vultr_firewall_rule" "ssh_v4" {
-  firewall_group_id = vultr_firewall_group.k8s_node.id
-  protocol          = "tcp"
-  ip_type           = "v4"
-  subnet            = "0.0.0.0"
-  subnet_size       = 0
-  port              = "22"
-}
-
-resource "vultr_firewall_rule" "ssh_v6" {
-  firewall_group_id = vultr_firewall_group.k8s_node.id
-  protocol          = "tcp"
-  ip_type           = "v6"
-  subnet            = "::"
-  subnet_size       = 0
-  port              = "22"
+  description = "k8s node: tailscale only"
 }
 
 resource "vultr_firewall_rule" "tailscale_v4" {
