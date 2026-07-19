@@ -10,6 +10,9 @@ on:
 
 jobs:
   diff-preview:
+    # This job runs on a self-hosted runner inside the cluster network, so it
+    # must never execute code from fork pull requests.
+    if: github.event.pull_request.head.repo.fork == false
     runs-on: arc-infra
     permissions:
       contents: read
