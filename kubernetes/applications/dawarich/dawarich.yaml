@@ -1,0 +1,190 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dawarich-config
+  namespace: dawarich
+data:
+  RAILS_ENV: production
+  REDIS_URL: redis://redis:6379
+  DATABASE_HOST: postgres
+  DATABASE_PORT: "5432"
+  DATABASE_USERNAME: dawarich
+  DATABASE_NAME: dawarich
+  APPLICATION_HOSTS: dawarich.toof.jp
+  APPLICATION_PROTOCOL: http
+  TIME_ZONE: Asia/Tokyo
+  RAILS_LOG_TO_STDOUT: "true"
+  SELF_HOSTED: "true"
+  STORE_GEODATA: "true"
+  PROMETHEUS_EXPORTER_ENABLED: "false"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dawarich-data
+  namespace: dawarich
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich
+  namespace: dawarich
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: dawarich
+  template:
+    metadata:
+      labels:
+        app: dawarich
+    spec:
+      containers:
+        - name: app
+          image: freikin/dawarich:1.10.1
+          command:
+            - web-entrypoint.sh
+          args:
+            - bin/rails
+            - server
+            - -p
+            - "3000"
+            - -b
+            - "::"
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: WEB_CONCURRENCY
+              value: "1"
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: dawarich-config
+            - secretRef:
+                name: dawarich-secret
+          startupProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          volumeMounts:
+            - name: dawarich-data
+              mountPath: /var/app/public
+              subPath: public
+            - name: dawarich-data
+              mountPath: /var/app/tmp/imports/watched
+              subPath: watched
+            - name: dawarich-data
+              mountPath: /var/app/storage
+              subPath: storage
+        - name: sidekiq
+          image: freikin/dawarich:1.10.1
+          command:
+            - sidekiq-entrypoint.sh
+          args:
+            - sidekiq
+          env:
+            - name: BACKGROUND_PROCESSING_CONCURRENCY
+              value: "3"
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: dawarich-config
+            - secretRef:
+                name: dawarich-secret
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - sidekiq
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          volumeMounts:
+            - name: dawarich-data
+              mountPath: /var/app/public
+              subPath: public
+            - name: dawarich-data
+              mountPath: /var/app/tmp/imports/watched
+              subPath: watched
+            - name: dawarich-data
+              mountPath: /var/app/storage
+              subPath: storage
+      volumes:
+        - name: dawarich-data
+          persistentVolumeClaim:
+            claimName: dawarich-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dawarich
+  namespace: dawarich
+spec:
+  selector:
+    app: dawarich
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dawarich
+  namespace: dawarich
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+    - host: dawarich.toof.jp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dawarich
+                port:
+                  number: 3000

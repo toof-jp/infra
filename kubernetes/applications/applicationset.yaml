@@ -30,6 +30,8 @@ spec:
             namespace: cdi
           - name: cloudflare-external-secret
             namespace: cloudflare
+          - name: dawarich
+            namespace: dawarich
           - name: dev-vm
             namespace: dev-vm
           - name: external-secrets
