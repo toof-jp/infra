@@ -1,2 +1,11 @@
 /node_modules
 kubernetes/applications/*/charts/
+
+.env
+.env.*
+!.env.template
+key.json
+credentials*.json
+*.pem
+*.tfstate*
+*.tfvars*

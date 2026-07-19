@@ -19,7 +19,7 @@ data:
 
     exporters:
       debug:
-        verbosity: detailed
+        verbosity: basic
       googlecloud:
         project: toof-infra
 

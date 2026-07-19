@@ -27,7 +27,7 @@ spec:
             - name: TOKEN_DURATION
               value: 24h
             - name: ALLOWED_ORIGINS
-              value: http://localhost:5173,https://localhost:5173,https://shisha.toof.jp
+              value: https://shisha.toof.jp
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://otel-collector.monitoring.svc.cluster.local:4318
           envFrom:
