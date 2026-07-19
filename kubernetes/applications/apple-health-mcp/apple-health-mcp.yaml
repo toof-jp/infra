@@ -1,0 +1,132 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: apple-health-mcp
+  namespace: apple-health-mcp
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: apple-health-mcp-secret
+  data:
+    - secretKey: INFLUXDB_TOKEN
+      remoteRef:
+        key: apple-health-influxdb-token
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apple-health-mcp-config
+  namespace: apple-health-mcp
+data:
+  INFLUXDB_URL: http://influxdb.apple-health.svc.cluster.local:8086
+  INFLUXDB_ORG: apple-health
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apple-health-mcp
+  namespace: apple-health-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apple-health-mcp
+  template:
+    metadata:
+      labels:
+        app: apple-health-mcp
+    spec:
+      containers:
+        - name: influxdb-mcp-server
+          image: node:24-alpine
+          command:
+            - sh
+            - -c
+          args:
+            - exec npx --yes influxdb-mcp-server@0.2.0 --http 3000
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: apple-health-mcp-config
+            - secretRef:
+                name: apple-health-mcp-secret
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apple-health-mcp
+  namespace: apple-health-mcp
+spec:
+  selector:
+    app: apple-health-mcp
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: apple-health-mcp
+  namespace: apple-health-mcp
+spec:
+  podSelector:
+    matchLabels:
+      app: apple-health-mcp
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mcp-gate
+          podSelector:
+            matchLabels:
+              app: mcp-gate-apple-health
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: apple-health
+      ports:
+        - protocol: TCP
+          port: 8086
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
