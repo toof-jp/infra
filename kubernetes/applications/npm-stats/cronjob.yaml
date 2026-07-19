@@ -27,7 +27,7 @@ metadata:
   name: npm-stats-secret
   namespace: npm-stats
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore

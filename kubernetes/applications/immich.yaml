@@ -5,7 +5,7 @@ metadata:
   name: immich
   namespace: argocd
 spec:
-  project: default
+  project: toof-infra
   syncPolicy:
     automated:
       prune: true

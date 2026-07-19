@@ -107,7 +107,7 @@ metadata:
   name: otel-collector-sa-key-external-secret
   namespace: monitoring
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore

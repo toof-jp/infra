@@ -40,7 +40,7 @@ metadata:
   name: shisha-log-external-secret
   namespace: shisha-log
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore

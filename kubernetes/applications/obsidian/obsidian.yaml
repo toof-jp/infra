@@ -5,7 +5,7 @@ metadata:
   name: obsidian-git-ssh
   namespace: obsidian
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: 1password-sdk
     kind: ClusterSecretStore

@@ -13,7 +13,7 @@ metadata:
   name: ghcr-auth
   namespace: dev-vm
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore

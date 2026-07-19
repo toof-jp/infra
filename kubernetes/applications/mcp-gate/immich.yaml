@@ -5,7 +5,7 @@ metadata:
   name: mcp-gate-immich
   namespace: mcp-gate
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: 1password-sdk
     kind: ClusterSecretStore

@@ -4,7 +4,7 @@ metadata:
   name: beancount-git-ssh
   namespace: beancount
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: 1password-sdk
     kind: ClusterSecretStore
