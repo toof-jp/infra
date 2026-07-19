@@ -1,0 +1,60 @@
+---
+githubConfigUrl: https://github.com/toof-jp/infra
+githubConfigSecret: arc-github-app
+minRunners: 0
+maxRunners: 1
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-gha-rs-controller
+template:
+  spec:
+    initContainers:
+      - name: init-dind-externals
+        image: ghcr.io/actions/actions-runner:2.335.1
+        command:
+          ["cp", "-r", "/home/runner/externals/.", "/home/runner/tmpDir/"]
+        volumeMounts:
+          - name: dind-externals
+            mountPath: /home/runner/tmpDir
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:2.335.1
+        command: ["/home/runner/run.sh"]
+        env:
+          - name: DOCKER_HOST
+            value: unix:///var/run/docker.sock
+        volumeMounts:
+          - name: work
+            mountPath: /home/runner/_work
+          - name: dind-sock
+            mountPath: /var/run
+      - name: dind
+        image: docker:29.6.2-dind
+        args:
+          - dockerd
+          - --host=unix:///var/run/docker.sock
+          - --group=$(DOCKER_GROUP_GID)
+        env:
+          - name: DOCKER_GROUP_GID
+            value: "123"
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: work
+            mountPath: /home/runner/_work
+          - name: dind-sock
+            mountPath: /var/run
+          - name: dind-externals
+            mountPath: /home/runner/externals
+          - name: docker-data
+            mountPath: /var/lib/docker
+    volumes:
+      - name: work
+        emptyDir: {}
+      - name: dind-sock
+        emptyDir: {}
+      - name: dind-externals
+        emptyDir: {}
+      - name: docker-data
+        persistentVolumeClaim:
+          claimName: arc-infra-docker

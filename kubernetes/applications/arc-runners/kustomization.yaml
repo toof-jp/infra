@@ -13,3 +13,9 @@ helmCharts:
     releaseName: arc-dotfiles
     namespace: arc-runners
     valuesFile: arc-dotfiles-values.yaml
+  - name: gha-runner-scale-set
+    repo: oci://ghcr.io/actions/actions-runner-controller-charts
+    version: 0.14.2
+    releaseName: arc-infra
+    namespace: arc-runners
+    valuesFile: arc-infra-values.yaml

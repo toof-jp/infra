@@ -10,3 +10,15 @@ spec:
   resources:
     requests:
       storage: 50Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: arc-infra-docker
+  namespace: arc-runners
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
