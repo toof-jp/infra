@@ -1,8 +1,9 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  terraform_user_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/terraform"
-  terraform_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-management"
+  terraform_user_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/terraform"
+  terraform_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-management"
+  hcp_terraform_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/hcp-terraform-run"
   terraform_policy_arns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TerraformManagementPolicy",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/TerraformUserAssumeRole",
@@ -42,7 +43,10 @@ data "aws_iam_policy_document" "terraform_management" {
       "iam:UpdateRole",
       "iam:UpdateRoleDescription",
     ]
-    resources = [local.terraform_role_arn]
+    resources = [
+      local.terraform_role_arn,
+      local.hcp_terraform_role_arn,
+    ]
   }
 
   statement {
@@ -74,6 +78,7 @@ data "aws_iam_policy_document" "terraform_management" {
     resources = [
       local.terraform_user_arn,
       local.terraform_role_arn,
+      local.hcp_terraform_role_arn,
     ]
     condition {
       test     = "ArnEquals"
@@ -112,14 +117,6 @@ data "aws_iam_policy_document" "terraform_management" {
   }
 }
 
-resource "aws_iam_user" "terraform" {
-  name = "terraform"
-
-  tags = {
-    ManagedBy = "terraform"
-  }
-}
-
 resource "aws_iam_policy" "terraform_management" {
   name        = "TerraformManagementPolicy"
   description = "Allows Terraform to manage IAM and S3 resources."
@@ -128,12 +125,12 @@ resource "aws_iam_policy" "terraform_management" {
 
 data "aws_iam_policy_document" "terraform_role_trust" {
   statement {
-    sid    = "AllowTerraformUserAssumeRole"
+    sid    = "AllowHCPTerraformRunRoleAssumeRole"
     effect = "Allow"
 
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_user.terraform.arn]
+      identifiers = [aws_iam_role.hcp_terraform.arn]
     }
 
     actions = ["sts:AssumeRole"]
@@ -154,7 +151,7 @@ resource "aws_iam_role_policy_attachment" "terraform_management" {
   policy_arn = aws_iam_policy.terraform_management.arn
 }
 
-data "aws_iam_policy_document" "terraform_user_assume_role" {
+data "aws_iam_policy_document" "hcp_terraform_assume_role" {
   statement {
     sid     = "AllowAssumeTerraformManagementRole"
     actions = ["sts:AssumeRole"]
@@ -164,13 +161,13 @@ data "aws_iam_policy_document" "terraform_user_assume_role" {
   }
 }
 
-resource "aws_iam_policy" "terraform_user_assume_role" {
+resource "aws_iam_policy" "hcp_terraform_assume_role" {
   name        = "TerraformUserAssumeRole"
-  description = "Allows the terraform IAM user to assume the terraform-management role."
-  policy      = data.aws_iam_policy_document.terraform_user_assume_role.json
+  description = "Allows the HCP Terraform run role to assume the terraform-management role."
+  policy      = data.aws_iam_policy_document.hcp_terraform_assume_role.json
 }
 
-resource "aws_iam_user_policy_attachment" "terraform_assume_role" {
-  user       = aws_iam_user.terraform.name
-  policy_arn = aws_iam_policy.terraform_user_assume_role.arn
+moved {
+  from = aws_iam_policy.terraform_user_assume_role
+  to   = aws_iam_policy.hcp_terraform_assume_role
 }

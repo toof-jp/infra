@@ -1,17 +1,3 @@
-data "google_secret_manager_secret_version" "aws_access_key_id" {
-  project    = google_project.toof_infra.project_id
-  secret     = "aws_access_key_id"
-  version    = "latest"
-  depends_on = [google_project_service.enabled["secretmanager.googleapis.com"]]
-}
-
-data "google_secret_manager_secret_version" "aws_secret_access_key" {
-  project    = google_project.toof_infra.project_id
-  secret     = "aws_secret_access_key"
-  version    = "latest"
-  depends_on = [google_project_service.enabled["secretmanager.googleapis.com"]]
-}
-
 resource "tfe_organization" "infra" {
   name  = "toof-infra"
   email = var.tfe_email
@@ -37,10 +23,6 @@ resource "tfe_workspace_settings" "infra" {
 }
 
 locals {
-  aws_access_key_id_value     = data.google_secret_manager_secret_version.aws_access_key_id.secret_data
-  aws_secret_access_key_value = data.google_secret_manager_secret_version.aws_secret_access_key.secret_data
-  google_credentials_value    = replace(replace(base64decode(google_service_account_key.terraform_sa_key.private_key), "\r", ""), "\n", "")
-
   hcp_terraform_variables = {
     google_billing_account = {
       value     = var.google_billing_account
@@ -120,33 +102,30 @@ locals {
       # vultr_api_key above.
       hcl = false
     }
-    AWS_ACCESS_KEY_ID = {
-      value     = local.aws_access_key_id_value
-      sensitive = true
+    TFC_GCP_PROVIDER_AUTH = {
+      value     = "true"
+      sensitive = false
       category  = "env"
     }
-    AWS_SECRET_ACCESS_KEY = {
-      value     = local.aws_secret_access_key_value
-      sensitive = true
+    TFC_GCP_RUN_SERVICE_ACCOUNT_EMAIL = {
+      value     = google_service_account.terraform_sa.email
+      sensitive = false
       category  = "env"
     }
-    GOOGLE_CREDENTIALS = {
-      value     = local.google_credentials_value
-      sensitive = true
+    TFC_GCP_WORKLOAD_PROVIDER_NAME = {
+      value     = google_iam_workload_identity_pool_provider.hcp_terraform.name
+      sensitive = false
       category  = "env"
     }
-  }
-}
-
-resource "terraform_data" "validate_hcp_env_secrets" {
-  lifecycle {
-    precondition {
-      condition = alltrue([
-        local.aws_access_key_id_value != "",
-        local.aws_secret_access_key_value != "",
-        local.google_credentials_value != "",
-      ])
-      error_message = "Missing required secrets: ensure aws_access_key_id, aws_secret_access_key (GSM) and terraform_sa key (GOOGLE_CREDENTIALS) are populated."
+    TFC_AWS_PROVIDER_AUTH = {
+      value     = "true"
+      sensitive = false
+      category  = "env"
+    }
+    TFC_AWS_RUN_ROLE_ARN = {
+      value     = aws_iam_role.hcp_terraform.arn
+      sensitive = false
+      category  = "env"
     }
   }
 }
