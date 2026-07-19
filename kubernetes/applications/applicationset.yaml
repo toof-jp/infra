@@ -24,6 +24,8 @@ spec:
             namespace: bbs
           - name: beancount
             namespace: beancount
+          - name: beancount-mcp
+            namespace: beancount-mcp
           - name: blues
             namespace: blues
           - name: cdi

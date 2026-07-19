@@ -90,3 +90,34 @@ In the `immich-mcp` Auth0 Application, add `https://claude.ai` to Allowed Web Or
 3. Advanced settings -> OAuth Client ID: `terraform output -raw auth0_immich_mcp_client_id`
 4. Advanced settings -> OAuth Client Secret: `terraform output -raw auth0_immich_mcp_client_secret`
 5. Add, sign in on the Auth0 screen, and finish the connector setup.
+
+## Beancount MCP Gateway
+
+`beancount.yaml` exposes the Beancount MCP endpoint at:
+
+```text
+https://beancount-mcp.toof.jp/mcp
+```
+
+The upstream is [toof-jp/beancount-mcp-server](https://github.com/toof-jp/beancount-mcp-server) running in the `beancount-mcp` namespace (`kubernetes/applications/beancount-mcp/`), serving Streamable HTTP at `/mcp` on port 3000. The ledger is git-synced from `toof-jp/beancount-ledger` (same SSH key as the fava app) and mounted read-only, so the server's write tools (`add_transaction`, `append_entry`) fail by design; the connector is effectively read-only.
+
+### Secret Values
+
+Populate the `mcp-gate/beancount/*` 1Password items from Terraform outputs:
+
+- `mcp-gate/beancount/authorization-server`: `terraform output -raw auth0_obsidian_mcp_issuer`
+- `mcp-gate/beancount/jwks-uri`: `terraform output -raw auth0_obsidian_mcp_jwks_uri`
+- `mcp-gate/beancount/expected-issuer`: `terraform output -raw auth0_obsidian_mcp_issuer`
+- `mcp-gate/beancount/expected-audience`: `terraform output -raw beancount_mcp_audience`
+
+### Auth0 Manual Settings
+
+In the `beancount-mcp` Auth0 Application, add `https://claude.ai` to Allowed Web Origins. The tenant-wide Resource Parameter Compatibility Profile is already enabled.
+
+### Claude Connector
+
+1. Settings -> Connectors -> Add Custom Connector
+2. Remote MCP server URL: `https://beancount-mcp.toof.jp/mcp`
+3. Advanced settings -> OAuth Client ID: `terraform output -raw auth0_beancount_mcp_client_id`
+4. Advanced settings -> OAuth Client Secret: `terraform output -raw auth0_beancount_mcp_client_secret`
+5. Add, sign in on the Auth0 screen, and finish the connector setup.
