@@ -8,6 +8,7 @@ locals {
     "grafana",
     "obsidian-gui",
     "beancount",
+    "openclaw",
   ]
 }
 

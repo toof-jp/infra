@@ -71,12 +71,6 @@ resource "google_secret_manager_secret_iam_member" "monitoring_function_deployer
   member    = "serviceAccount:${google_service_account.monitoring_function_deployer.email}"
 }
 
-resource "google_project_iam_member" "monitoring_function_deployer_sa_user" {
-  project = google_project.toof_infra.project_id
-  role    = "roles/iam.serviceAccountUser"
-  member  = "serviceAccount:${google_service_account.monitoring_function_deployer.email}"
-}
-
 resource "google_service_account_iam_member" "default_compute_act_as" {
   service_account_id = "projects/${google_project.toof_infra.project_id}/serviceAccounts/${google_project.toof_infra.number}-compute@developer.gserviceaccount.com"
   role               = "roles/iam.serviceAccountUser"
