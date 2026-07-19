@@ -63,8 +63,9 @@ template:
       - name: dind-externals
         emptyDir: {}
       - name: docker-data
-        persistentVolumeClaim:
-          claimName: arc-infra-docker
+        hostPath:
+          path: /var/lib/arc-infra-docker
+          type: DirectoryOrCreate
       - name: cgroup
         hostPath:
           path: /sys/fs/cgroup
