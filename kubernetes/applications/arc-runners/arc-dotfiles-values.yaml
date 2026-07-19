@@ -10,9 +10,15 @@ template:
   spec:
     nodeSelector:
       kubernetes.io/hostname: zen2
-    securityContext:
-      fsGroup: 1001
-      fsGroupChangePolicy: OnRootMismatch
+    initContainers:
+      - name: init-nix-owner
+        image: ghcr.io/actions/actions-runner:2.335.1
+        command: ["sh", "-c", "chown runner:runner /nix && chmod g-s /nix"]
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+          - name: nix
+            mountPath: /nix
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:2.335.1
