@@ -50,6 +50,22 @@ data "aws_iam_policy_document" "terraform_management" {
   }
 
   statement {
+    sid = "ManageHCPTerraformOIDCProvider"
+    actions = [
+      "iam:AddClientIDToOpenIDConnectProvider",
+      "iam:CreateOpenIDConnectProvider",
+      "iam:DeleteOpenIDConnectProvider",
+      "iam:GetOpenIDConnectProvider",
+      "iam:ListOpenIDConnectProviderTags",
+      "iam:RemoveClientIDFromOpenIDConnectProvider",
+      "iam:TagOpenIDConnectProvider",
+      "iam:UntagOpenIDConnectProvider",
+      "iam:UpdateOpenIDConnectProviderThumbprint",
+    ]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/app.terraform.io"]
+  }
+
+  statement {
     sid = "ManageTerraformPolicies"
     actions = [
       "iam:CreatePolicy",
