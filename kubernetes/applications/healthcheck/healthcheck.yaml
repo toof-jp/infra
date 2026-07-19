@@ -36,7 +36,7 @@ metadata:
   name: healthcheck-external-secret
   namespace: healthcheck
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore

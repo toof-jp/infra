@@ -5,7 +5,7 @@ metadata:
   name: headlamp
   namespace: argocd
 spec:
-  project: default
+  project: toof-infra
   sources:
     - repoURL: https://github.com/toof-jp/infra
       targetRevision: HEAD

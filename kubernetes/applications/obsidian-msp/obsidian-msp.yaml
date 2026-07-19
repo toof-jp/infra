@@ -5,7 +5,7 @@ metadata:
   name: obsidian-msp-git-sync
   namespace: obsidian-msp
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore

@@ -1,0 +1,46 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: toof-infra
+  namespace: argocd
+spec:
+  sourceRepos:
+    - https://github.com/toof-jp/infra
+    - https://github.com/toof-jp/infra.git
+    - https://charts.external-secrets.io
+    - https://charts.longhorn.io/
+    - https://helm.strrl.dev
+    - https://immich-app.github.io/immich-charts
+    - https://kubernetes-sigs.github.io/headlamp/
+    - https://kubernetes-sigs.github.io/metrics-server/
+    - https://prometheus-community.github.io/helm-charts
+    - oci://ghcr.io/actions/actions-runner-controller-charts
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "*"
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+    - group: external-secrets.io
+      kind: ClusterSecretStore
+    - group: generators.external-secrets.io
+      kind: ClusterGenerator
+    - group: cdi.kubevirt.io
+      kind: CDI
+    - group: networking.k8s.io
+      kind: IngressClass
+    - group: scheduling.k8s.io
+      kind: PriorityClass
+    - group: apiregistration.k8s.io
+      kind: APIService
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration

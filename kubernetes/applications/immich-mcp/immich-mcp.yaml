@@ -5,7 +5,7 @@ metadata:
   name: immich-mcp
   namespace: immich-mcp
 spec:
-  refreshPolicy: CreatedOnce
+  refreshInterval: 1h
   secretStoreRef:
     name: gcp-secret-manager
     kind: ClusterSecretStore
