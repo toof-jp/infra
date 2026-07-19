@@ -8,6 +8,8 @@ controllerServiceAccount:
   name: arc-gha-rs-controller
 template:
   spec:
+    nodeSelector:
+      kubernetes.io/hostname: zen2
     securityContext:
       fsGroup: 1001
       fsGroupChangePolicy: OnRootMismatch
