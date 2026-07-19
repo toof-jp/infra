@@ -1,6 +1,6 @@
 ---
 githubConfigUrl: https://github.com/toof-jp/dotfiles
-githubConfigSecret: arc-dotfiles-github-app
+githubConfigSecret: arc-github-app
 minRunners: 1
 maxRunners: 1
 controllerServiceAccount:
