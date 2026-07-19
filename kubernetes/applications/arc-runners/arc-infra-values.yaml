@@ -52,9 +52,6 @@ template:
             mountPath: /var/lib/docker
           - name: cgroup
             mountPath: /sys/fs/cgroup
-          - name: modules
-            mountPath: /lib/modules
-            readOnly: true
     volumes:
       - name: work
         emptyDir: {}
@@ -69,8 +66,4 @@ template:
       - name: cgroup
         hostPath:
           path: /sys/fs/cgroup
-          type: Directory
-      - name: modules
-        hostPath:
-          path: /lib/modules
           type: Directory
