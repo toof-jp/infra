@@ -75,7 +75,8 @@ data:
       "agents": {
         "defaults": {
           "model": {
-            "primary": "anthropic-vertex/claude-sonnet-4-6"
+            "primary": "anthropic-vertex/claude-sonnet-4-6",
+            "fallbacks": ["google-vertex/gemini-2.5-pro"]
           }
         }
       },
