@@ -35,7 +35,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: palworld
-          image: thijsvanloef/palworld-server-docker:v2.6.0
+          image: thijsvanloef/palworld-server-docker:v2.7.0
           env:
             - name: PUID
               value: "1000"
