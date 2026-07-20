@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: immich-library
   namespace: immich
+  labels:
+    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteOnce

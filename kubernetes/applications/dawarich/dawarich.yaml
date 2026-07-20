@@ -26,6 +26,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: dawarich-data
   namespace: dawarich
+  labels:
+    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteOnce

@@ -82,6 +82,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: influxdb-data
+        labels:
+          recurring-job-group.longhorn.io/db-6h: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes:
           - ReadWriteOnce
