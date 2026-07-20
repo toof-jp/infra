@@ -32,6 +32,8 @@ spec:
             namespace: cdi
           - name: cloudflare-external-secret
             namespace: cloudflare
+          - name: cloudnative-pg
+            namespace: cnpg-system
           - name: dawarich
             namespace: dawarich
           - name: dawarich-mcp
