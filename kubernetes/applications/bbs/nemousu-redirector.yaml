@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nemousu-redirector
+  namespace: bbs
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nemousu-redirector
+  template:
+    metadata:
+      labels:
+        app: nemousu-redirector
+    spec:
+      # Pinned to sakura-vps because the public DNS A record for
+      # nemousu.live-on.net points at this node's fixed IP
+      # (153.126.161.157) and traffic is served via NodePort on that node.
+      nodeSelector:
+        kubernetes.io/hostname: sakura-vps
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: caddy
+          image: ghcr.io/toof-jp/nemousu-live-on-net-redirector:latest
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+            - name: caddy-data
+              mountPath: /data
+            - name: caddy-config
+              mountPath: /config
+      volumes:
+        - name: caddy-data
+          emptyDir: {}
+        - name: caddy-config
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nemousu-redirector
+  namespace: bbs
+spec:
+  type: NodePort
+  selector:
+    app: nemousu-redirector
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      nodePort: 30080
+    - name: https
+      port: 443
+      targetPort: https
+      nodePort: 30443
