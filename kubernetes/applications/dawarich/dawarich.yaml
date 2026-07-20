@@ -11,7 +11,9 @@ data:
   DATABASE_PORT: "5432"
   DATABASE_USERNAME: dawarich
   DATABASE_NAME: dawarich
-  APPLICATION_HOSTS: dawarich.toof.jp
+  # Include the in-cluster DNS name so dawarich-mcp (and any other in-cluster
+  # client) is not blocked by Rails' HostAuthorization middleware.
+  APPLICATION_HOSTS: dawarich.toof.jp,dawarich.dawarich.svc.cluster.local
   APPLICATION_PROTOCOL: http
   TIME_ZONE: Asia/Tokyo
   RAILS_LOG_TO_STDOUT: "true"
