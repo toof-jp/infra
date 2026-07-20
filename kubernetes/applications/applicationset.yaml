@@ -34,6 +34,8 @@ spec:
             namespace: cloudflare
           - name: dawarich
             namespace: dawarich
+          - name: dawarich-mcp
+            namespace: dawarich-mcp
           - name: dev-vm
             namespace: dev-vm
           - name: external-secrets

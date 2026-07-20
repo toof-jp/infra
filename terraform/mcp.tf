@@ -9,6 +9,9 @@ locals {
 
   beancount_mcp_hostname = "beancount-mcp.${var.domain}"
   beancount_mcp_url      = "https://${local.beancount_mcp_hostname}"
+
+  dawarich_mcp_hostname = "dawarich-mcp.${var.domain}"
+  dawarich_mcp_url      = "https://${local.dawarich_mcp_hostname}"
 }
 
 resource "auth0_client" "obsidian_mcp" {
@@ -168,6 +171,46 @@ resource "auth0_resource_server" "beancount_mcp" {
 
 resource "auth0_resource_server_scopes" "beancount_mcp" {
   resource_server_identifier = auth0_resource_server.beancount_mcp.identifier
+  scopes {
+    name        = "mcp:tools"
+    description = "MCP tools access"
+  }
+}
+
+resource "auth0_client" "dawarich_mcp" {
+  name        = "dawarich-mcp"
+  app_type    = "regular_web"
+  description = "Claude remote MCP connector for the Dawarich location history."
+
+  callbacks = [
+    "https://claude.ai/api/mcp/auth_callback",
+    "https://claude.com/api/mcp/auth_callback",
+  ]
+
+  allowed_logout_urls = []
+
+  grant_types = [
+    "authorization_code",
+    "refresh_token",
+  ]
+
+  oidc_conformant = true
+}
+
+resource "auth0_client_credentials" "dawarich_mcp" {
+  client_id             = auth0_client.dawarich_mcp.id
+  authentication_method = "client_secret_post"
+}
+
+resource "auth0_resource_server" "dawarich_mcp" {
+  name                 = "dawarich-mcp-api"
+  identifier           = "${local.dawarich_mcp_url}/"
+  signing_alg          = "RS256"
+  allow_offline_access = true
+}
+
+resource "auth0_resource_server_scopes" "dawarich_mcp" {
+  resource_server_identifier = auth0_resource_server.dawarich_mcp.identifier
   scopes {
     name        = "mcp:tools"
     description = "MCP tools access"

@@ -1,0 +1,126 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: dawarich-mcp
+  namespace: dawarich-mcp
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: dawarich-mcp-secret
+  data:
+    - secretKey: DAWARICH_API_KEY
+      remoteRef:
+        key: dawarich-mcp-api-key
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dawarich-mcp-config
+  namespace: dawarich-mcp
+data:
+  DAWARICH_BASE_URL: http://dawarich.dawarich.svc.cluster.local:3000
+  MCP_PORT: "3000"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich-mcp
+  namespace: dawarich-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dawarich-mcp
+  template:
+    metadata:
+      labels:
+        app: dawarich-mcp
+    spec:
+      containers:
+        - name: dawarich-mcp
+          image: ghcr.io/toof-jp/dawarich-mcp-server:latest
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: dawarich-mcp-config
+            - secretRef:
+                name: dawarich-mcp-secret
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dawarich-mcp
+  namespace: dawarich-mcp
+spec:
+  selector:
+    app: dawarich-mcp
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dawarich-mcp
+  namespace: dawarich-mcp
+spec:
+  podSelector:
+    matchLabels:
+      app: dawarich-mcp
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mcp-gate
+          podSelector:
+            matchLabels:
+              app: mcp-gate-dawarich
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: dawarich
+          podSelector:
+            matchLabels:
+              app: dawarich
+      ports:
+        - protocol: TCP
+          port: 3000
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
