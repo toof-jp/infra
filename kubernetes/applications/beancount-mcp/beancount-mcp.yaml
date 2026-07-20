@@ -86,6 +86,10 @@ spec:
               from beancount_mcp_server.server import mcp
               mcp.settings.host = "0.0.0.0"
               mcp.settings.port = 3000
+              # FastMCP auto-enables DNS rebinding protection because it is
+              # constructed with the default host=127.0.0.1; drop it so
+              # mcp-gate can proxy requests using the in-cluster hostname.
+              mcp.settings.transport_security = None
               mcp.run(transport="streamable-http")
           env:
             - name: BEANCOUNT_FILE
