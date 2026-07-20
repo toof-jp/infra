@@ -27,7 +27,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: caddy
-          image: ghcr.io/toof-jp/nemousu-live-on-net-redirector:latest
+          image: ghcr.io/toof-jp/nemousu-live-on-net-redirector:sha-b495370
           ports:
             - name: http
               containerPort: 80
