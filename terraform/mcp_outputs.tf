@@ -96,3 +96,24 @@ output "beancount_mcp_audience" {
   value       = auth0_resource_server.beancount_mcp.identifier
   description = "Expected audience configured for mcp-gate. Requires the tenant's Resource Parameter Compatibility Profile so RFC 8707 resource requests map to this API."
 }
+
+output "auth0_dawarich_mcp_client_id" {
+  value       = auth0_client.dawarich_mcp.client_id
+  description = "OAuth client ID for the Claude Dawarich MCP connector."
+}
+
+output "auth0_dawarich_mcp_client_secret" {
+  value       = auth0_client_credentials.dawarich_mcp.client_secret
+  description = "OAuth client secret for the Claude Dawarich MCP connector."
+  sensitive   = true
+}
+
+output "dawarich_mcp_resource_uri" {
+  value       = local.dawarich_mcp_url
+  description = "Public URL/resource URI for the Dawarich MCP gateway."
+}
+
+output "dawarich_mcp_audience" {
+  value       = auth0_resource_server.dawarich_mcp.identifier
+  description = "Expected audience configured for mcp-gate. Requires the tenant's Resource Parameter Compatibility Profile so RFC 8707 resource requests map to this API."
+}

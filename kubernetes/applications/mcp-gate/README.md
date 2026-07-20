@@ -121,3 +121,36 @@ In the `beancount-mcp` Auth0 Application, add `https://claude.ai` to Allowed Web
 3. Advanced settings -> OAuth Client ID: `terraform output -raw auth0_beancount_mcp_client_id`
 4. Advanced settings -> OAuth Client Secret: `terraform output -raw auth0_beancount_mcp_client_secret`
 5. Add, sign in on the Auth0 screen, and finish the connector setup.
+
+## Dawarich MCP Gateway
+
+`dawarich.yaml` exposes the Dawarich MCP endpoint at:
+
+```text
+https://dawarich-mcp.toof.jp/mcp
+```
+
+The upstream is [toof-jp/dawarich-mcp-server](https://github.com/toof-jp/dawarich-mcp-server) running in the `dawarich-mcp` namespace (`kubernetes/applications/dawarich-mcp/`), serving Streamable HTTP at `/mcp` on port 3000. It exposes read-only tools over the Dawarich API of the in-cluster Dawarich instance (`dawarich` namespace).
+
+### Secret Values
+
+Populate the `mcp-gate/dawarich/*` 1Password items from Terraform outputs:
+
+- `mcp-gate/dawarich/authorization-server`: `terraform output -raw auth0_obsidian_mcp_issuer`
+- `mcp-gate/dawarich/jwks-uri`: `terraform output -raw auth0_obsidian_mcp_jwks_uri`
+- `mcp-gate/dawarich/expected-issuer`: `terraform output -raw auth0_obsidian_mcp_issuer`
+- `mcp-gate/dawarich/expected-audience`: `terraform output -raw dawarich_mcp_audience`
+
+The Dawarich API key comes from GCP Secret Manager (`dawarich-mcp-api-key`). Copy it from the Dawarich UI (Account Settings) after creating the user; the MCP server only performs GET requests.
+
+### Auth0 Manual Settings
+
+In the `dawarich-mcp` Auth0 Application, add `https://claude.ai` to Allowed Web Origins. The tenant-wide Resource Parameter Compatibility Profile is already enabled.
+
+### Claude Connector
+
+1. Settings -> Connectors -> Add Custom Connector
+2. Remote MCP server URL: `https://dawarich-mcp.toof.jp/mcp`
+3. Advanced settings -> OAuth Client ID: `terraform output -raw auth0_dawarich_mcp_client_id`
+4. Advanced settings -> OAuth Client Secret: `terraform output -raw auth0_dawarich_mcp_client_secret`
+5. Add, sign in on the Auth0 screen, and finish the connector setup.
