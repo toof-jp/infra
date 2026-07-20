@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: dawarich-mcp
-          image: ghcr.io/toof-jp/dawarich-mcp-server:latest@sha256:29728699cec8ee057fe2227dd993ee2b3962189eae7597ffb0a394921682cd8d
+          image: ghcr.io/toof-jp/dawarich-mcp-server:latest@sha256:38c6dbaeaf70208ba43c672ec9406308ec08368447b8b39f607216f8c80550e1
           ports:
             - name: http
               containerPort: 3000
