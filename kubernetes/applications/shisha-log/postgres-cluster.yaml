@@ -40,12 +40,7 @@ spec:
         name: postgres-app-secret
       dataChecksums: true
       postInitSQL:
-        - |
-          DO $$ BEGIN
-            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN
-              CREATE ROLE service_role NOLOGIN;
-            END IF;
-          END $$
+        - CREATE ROLE service_role NOLOGIN
         - GRANT service_role TO shisha_log WITH ADMIN OPTION
       import:
         type: microservice
