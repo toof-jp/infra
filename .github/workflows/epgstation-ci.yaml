@@ -1,18 +1,18 @@
-name: Build & Push to GHCR (mirakc)
+name: Build & Push to GHCR (epgstation)
 
 on:
   push:
     branches: [ main ]
     paths:
-      - docker/mirakc/**
-      - .github/workflows/mirakc-ci.yml
+      - docker/epgstation/**
+      - .github/workflows/epgstation-ci.yaml
 
 permissions:
   contents: read
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/infra-mirakc
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/infra-epgstation
 
 jobs:
   build-and-push:
@@ -46,8 +46,8 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
-          context: docker/mirakc
-          file: docker/mirakc/Dockerfile
+          context: docker/epgstation
+          file: docker/epgstation/Dockerfile
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
