@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: epgstation-config
+  namespace: mirakc
+data:
+  # EPGStation v2 main config. SQLite keeps the stack single-node and
+  # avoids running a separate DB pod. Recorded files land on a Longhorn
+  # PVC mounted at /app/recorded.
+  config.yml: |
+    port: 8888
+    socketioPort: 8889
+
+    mirakurunPath: 'http://mirakc:40772'
+
+    dbtype: sqlite
+
+    encodeProcessNum: 2
+    concurrentEncodeNum: 1
+
+    recorded:
+      - name: recorded
+        path: '/app/recorded'
+    recordedFormat: '%YEAR%%MONTH%%DAY%_%HOUR%%MIN%%SEC%_%TITLE%_%CHANNEL%'
+    fileExtension: '.m2ts'
+
+    thumbnail: '/app/thumbnail'
+    thumbnailSize: '480x270'
+
+    dropLog: '/app/drop'
+
+    ffmpeg: '/usr/bin/ffmpeg'
+    ffprobe: '/usr/bin/ffprobe'
+
+    isSuppressReservesUpdateAllLog: true
+    isAllowedSameNameRecording: true

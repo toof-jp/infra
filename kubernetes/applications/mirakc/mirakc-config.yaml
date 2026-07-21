@@ -1,0 +1,74 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mirakc-config
+  namespace: mirakc
+data:
+  # Channel list for 生駒送信所 (Osaka central). Physical UHF channel
+  # numbers taken from the standard 大阪府 assignment; users receiving
+  # from other Kansai transmitters (神戸-摩耶山 for サンテレビ,
+  # 京都-比叡山 for KBS京都) can add entries here.
+  #
+  # recisdb needs the "T" prefix for terrestrial channels (T13, T15,
+  # ...), which is different from recpt1's bare number.
+  config.yml: |
+    epg:
+      cache-dir: /var/lib/mirakc/epg
+
+    server:
+      addrs:
+        - http: '0.0.0.0:40772'
+
+    channels:
+      - name: NHK-E
+        type: GR
+        channel: "T13"
+      - name: NHK-G
+        type: GR
+        channel: "T15"
+      - name: MBS
+        type: GR
+        channel: "T17"
+      - name: ABC
+        type: GR
+        channel: "T18"
+      - name: KTV
+        type: GR
+        channel: "T19"
+      - name: YTV
+        type: GR
+        channel: "T20"
+      - name: TVO
+        type: GR
+        channel: "T22"
+
+    # One tuner per USB device. Each PX-S1UD receives one channel at a
+    # time, so mirakc concurrency naturally maxes out at 4 recordings.
+    # `recisdb tune` decodes inline via the host pcscd (reached over
+    # /run/pcscd/pcscd.comm), so `decoded: true` lets mirakc skip its
+    # decode-filter step and forward the TS directly.
+    #
+    # Triple-mustache is required so mirakc's Tera engine doesn't
+    # HTML-escape the channel value.
+    tuners:
+      - name: PX-S1UD-0
+        types: [GR]
+        decoded: true
+        command: >-
+          recisdb tune --device /dev/dvb/adapter0/frontend0 --channel {{{channel}}} -
+      - name: PX-S1UD-1
+        types: [GR]
+        decoded: true
+        command: >-
+          recisdb tune --device /dev/dvb/adapter1/frontend0 --channel {{{channel}}} -
+      - name: PX-S1UD-2
+        types: [GR]
+        decoded: true
+        command: >-
+          recisdb tune --device /dev/dvb/adapter2/frontend0 --channel {{{channel}}} -
+      - name: PX-S1UD-3
+        types: [GR]
+        decoded: true
+        command: >-
+          recisdb tune --device /dev/dvb/adapter3/frontend0 --channel {{{channel}}} -
