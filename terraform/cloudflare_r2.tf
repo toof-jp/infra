@@ -65,3 +65,43 @@ resource "google_secret_manager_secret_version" "longhorn_backup_r2_secret_acces
   secret      = google_secret_manager_secret.longhorn_backup_r2_secret_access_key.id
   secret_data = sha256(cloudflare_api_token.longhorn_backup_r2.value)
 }
+
+resource "cloudflare_api_token" "github_repository_terraform_state" {
+  name = "github-repository-terraform-state"
+  policies = [{
+    effect = "allow"
+    resources = jsonencode({
+      "com.cloudflare.edge.r2.bucket.${var.cloudflare_account_id}_default_${cloudflare_r2_bucket.github_repository_terraform_state.name}" = "*"
+    })
+    permission_groups = [
+      { id = "6a018a9f2fc74eb6b293b0c548f38b39" }, # Workers R2 Storage Bucket Item Read
+      { id = "2efd5506f9c8494dacb1fa10a3e7d5b6" }, # Workers R2 Storage Bucket Item Write
+    ]
+  }]
+}
+
+resource "google_secret_manager_secret" "github_repository_terraform_state_r2_access_key_id" {
+  secret_id = "github-repository-terraform-state-r2-access-key-id"
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.enabled["secretmanager.googleapis.com"]]
+}
+
+resource "google_secret_manager_secret_version" "github_repository_terraform_state_r2_access_key_id" {
+  secret      = google_secret_manager_secret.github_repository_terraform_state_r2_access_key_id.id
+  secret_data = cloudflare_api_token.github_repository_terraform_state.id
+}
+
+resource "google_secret_manager_secret" "github_repository_terraform_state_r2_secret_access_key" {
+  secret_id = "github-repository-terraform-state-r2-secret-access-key"
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.enabled["secretmanager.googleapis.com"]]
+}
+
+resource "google_secret_manager_secret_version" "github_repository_terraform_state_r2_secret_access_key" {
+  secret      = google_secret_manager_secret.github_repository_terraform_state_r2_secret_access_key.id
+  secret_data = sha256(cloudflare_api_token.github_repository_terraform_state.value)
+}
