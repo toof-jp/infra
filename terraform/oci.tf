@@ -173,14 +173,6 @@ output "oci_vps_private_ip" {
   value = oci_core_instance.oci_vps.private_ip
 }
 
-# oci-vps-2: second always-free E2.1.Micro, added 2026-07-21 to replace
-# the terminated instance-20260120-2338 slot and stand up another k8s
-# worker. Launched via the OCI CLI on 2026-07-21 and adopted here.
-import {
-  to = oci_core_instance.oci_vps_2
-  id = "ocid1.instance.oc1.ap-osaka-1.anvwsljrlfc45kicwmfirh5c7tnkunhauqyrjvm4zakjcmvf6ek6xlmjd3eq"
-}
-
 resource "oci_core_instance" "oci_vps_2" {
   compartment_id      = var.oci_tenancy_ocid
   availability_domain = "yPbU:AP-OSAKA-1-AD-1"
