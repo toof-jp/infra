@@ -4,10 +4,8 @@ kind: Kustomization
 namespace: immich
 resources:
   - namespace.yaml
-  - external-secret.yaml
   - grafana-dashboard.yaml
   - postgres-cluster.yaml
-  - postgres.yaml
   - proxy.yaml
   - pvc.yaml
 helmCharts:
@@ -25,14 +23,14 @@ helmCharts:
           containers:
             main:
               env:
-                DB_HOSTNAME: postgres
+                DB_HOSTNAME: postgres-rw
                 DB_USERNAME: immich
                 DB_DATABASE_NAME: immich
                 DB_PASSWORD:
                   valueFrom:
                     secretKeyRef:
-                      name: postgres-secret
-                      key: POSTGRES_PASSWORD
+                      name: postgres-app-secret
+                      key: password
       immich:
         persistence:
           library:

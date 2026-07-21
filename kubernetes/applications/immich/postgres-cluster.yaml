@@ -45,19 +45,3 @@ spec:
       secret:
         name: postgres-app-secret
       dataChecksums: true
-      import:
-        type: microservice
-        databases:
-          - immich
-        source:
-          externalCluster: old-postgres
-  externalClusters:
-    - name: old-postgres
-      connectionParameters:
-        host: postgres
-        user: immich
-        dbname: immich
-        sslmode: disable
-      password:
-        name: postgres-secret
-        key: POSTGRES_PASSWORD
