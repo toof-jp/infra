@@ -82,7 +82,8 @@ spec:
             allowPrivilegeEscalation: false
           volumeMounts:
             - name: config
-              mountPath: /etc/mirakc
+              mountPath: /etc/mirakc/config.yml
+              subPath: config.yml
               readOnly: true
             - name: epg
               mountPath: /var/lib/mirakc/epg
