@@ -1,0 +1,60 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: postgres-app-external-secret
+  namespace: bbs
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: postgres-app-secret
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: user
+        password: "{{ .password }}"
+  data:
+    - secretKey: password
+      remoteRef:
+        key: bbs-postgres-password
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+  namespace: bbs
+spec:
+  instances: 1
+  imageName: ghcr.io/toof-jp/postgres-bigm:sha-4c22b29
+  postgresql:
+    shared_preload_libraries:
+      - pg_bigm
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: bbs
+      owner: user
+      secret:
+        name: postgres-app-secret
+      dataChecksums: true
+      import:
+        type: microservice
+        databases:
+          - bbs
+        source:
+          externalCluster: old-postgres
+  externalClusters:
+    - name: old-postgres
+      connectionParameters:
+        host: postgres
+        user: user
+        dbname: bbs
+        sslmode: disable
+      password:
+        name: postgres-secret
+        key: POSTGRES_PASSWORD
