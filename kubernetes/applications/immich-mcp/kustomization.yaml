@@ -5,5 +5,3 @@ namespace: immich-mcp
 resources:
   - namespace.yaml
   - immich-mcp.yaml
-components:
-  - ../../components/ghcr-auth
