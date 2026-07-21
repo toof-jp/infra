@@ -22,13 +22,6 @@ spec:
         revision: HEAD
         directories:
           - path: kubernetes/applications/*
-          # These directories provide supplementary manifests for multi-source
-          # Applications defined in kubernetes/applications/{headlamp,immich}.yaml
-          # and must not spawn their own Applications.
-          - path: kubernetes/applications/headlamp
-            exclude: true
-          - path: kubernetes/applications/immich
-            exclude: true
   template:
     metadata:
       name: "{{.path.basename}}"
