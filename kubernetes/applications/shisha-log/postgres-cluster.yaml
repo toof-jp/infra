@@ -42,19 +42,3 @@ spec:
       postInitSQL:
         - CREATE ROLE service_role NOLOGIN
         - GRANT service_role TO shisha_log WITH ADMIN OPTION
-      import:
-        type: microservice
-        databases:
-          - shisha_log
-        source:
-          externalCluster: old-postgres
-  externalClusters:
-    - name: old-postgres
-      connectionParameters:
-        host: postgres
-        user: shisha_log
-        dbname: shisha_log
-        sslmode: disable
-      password:
-        name: postgres-secret
-        key: POSTGRES_PASSWORD
