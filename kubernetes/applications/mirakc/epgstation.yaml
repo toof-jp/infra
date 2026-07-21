@@ -93,6 +93,18 @@ spec:
               mountPath: /app/config/config.yml
               subPath: config.yml
               readOnly: true
+            - name: config
+              mountPath: /app/config/operatorLogConfig.yml
+              subPath: operatorLogConfig.yml
+              readOnly: true
+            - name: config
+              mountPath: /app/config/epgUpdaterLogConfig.yml
+              subPath: epgUpdaterLogConfig.yml
+              readOnly: true
+            - name: config
+              mountPath: /app/config/serviceLogConfig.yml
+              subPath: serviceLogConfig.yml
+              readOnly: true
             - name: data
               mountPath: /app/data
             - name: recorded
