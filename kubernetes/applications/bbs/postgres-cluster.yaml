@@ -42,19 +42,3 @@ spec:
       secret:
         name: postgres-app-secret
       dataChecksums: true
-      import:
-        type: microservice
-        databases:
-          - bbs
-        source:
-          externalCluster: old-postgres
-  externalClusters:
-    - name: old-postgres
-      connectionParameters:
-        host: postgres
-        user: user
-        dbname: bbs
-        sslmode: disable
-      password:
-        name: postgres-secret
-        key: POSTGRES_PASSWORD
