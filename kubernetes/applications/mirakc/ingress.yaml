@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: epgstation
+  namespace: mirakc
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+    - host: epgstation.toof.jp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: epgstation
+                port:
+                  number: 8888

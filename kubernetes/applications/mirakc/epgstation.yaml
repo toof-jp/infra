@@ -1,0 +1,140 @@
+---
+# 100 GiB covers ~1 continuous OTA recording per tuner at ~24 Mbps for
+# a few days; the PVC is expandable in Longhorn if we outgrow it.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: epgstation-recorded
+  namespace: mirakc
+  labels:
+    recurring-job-group.longhorn.io/daily: enabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: epgstation-data
+  namespace: mirakc
+  labels:
+    recurring-job-group.longhorn.io/db-6h: enabled
+    recurring-job-group.longhorn.io/daily: enabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epgstation
+  namespace: mirakc
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: epgstation
+  template:
+    metadata:
+      labels:
+        app: epgstation
+    spec:
+      # Colocated with mirakc on nuc so the HLS/live stream doesn't
+      # round-trip over Tailscale between the tuner host and the UI.
+      nodeSelector:
+        kubernetes.io/hostname: nuc
+      securityContext:
+        # l3tnun/epgstation runs the app as UID/GID 1000 (node user in
+        # the upstream image); make Longhorn volumes writable to it.
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: epgstation
+          image: ghcr.io/toof-jp/infra-epgstation:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: Asia/Tokyo
+          ports:
+            - name: http
+              containerPort: 8888
+            - name: socketio
+              containerPort: 8889
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /api/version
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/version
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: data
+              mountPath: /app/data
+            - name: recorded
+              mountPath: /app/recorded
+            - name: thumbnail
+              mountPath: /app/thumbnail
+              subPath: thumbnail
+            - name: drop
+              mountPath: /app/drop
+              subPath: drop
+      volumes:
+        - name: config
+          configMap:
+            name: epgstation-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: epgstation-data
+        - name: recorded
+          persistentVolumeClaim:
+            claimName: epgstation-recorded
+        # thumbnails and drop logs live alongside the DB — small and
+        # cheap; a subPath on the same PVC keeps everything in one
+        # snapshot boundary.
+        - name: thumbnail
+          persistentVolumeClaim:
+            claimName: epgstation-data
+        - name: drop
+          persistentVolumeClaim:
+            claimName: epgstation-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: epgstation
+  namespace: mirakc
+spec:
+  selector:
+    app: epgstation
+  ports:
+    - name: http
+      port: 8888
+      targetPort: http
+    - name: socketio
+      port: 8889
+      targetPort: socketio
