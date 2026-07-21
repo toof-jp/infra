@@ -1,0 +1,65 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: postgres-app-external-secret
+  namespace: shisha-log
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: postgres-app-secret
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: shisha_log
+        password: "{{ .password }}"
+  data:
+    - secretKey: password
+      remoteRef:
+        key: shisha-log-db-password
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+  namespace: shisha-log
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-minimal-trixie
+  storage:
+    size: 5Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: shisha_log
+      owner: shisha_log
+      secret:
+        name: postgres-app-secret
+      dataChecksums: true
+      postInitSQL:
+        - |
+          DO $$ BEGIN
+            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN
+              CREATE ROLE service_role NOLOGIN;
+            END IF;
+          END $$
+        - GRANT service_role TO shisha_log WITH ADMIN OPTION
+      import:
+        type: microservice
+        databases:
+          - shisha_log
+        source:
+          externalCluster: old-postgres
+  externalClusters:
+    - name: old-postgres
+      connectionParameters:
+        host: postgres
+        user: shisha_log
+        dbname: shisha_log
+        sslmode: disable
+      password:
+        name: postgres-secret
+        key: POSTGRES_PASSWORD
