@@ -172,3 +172,46 @@ output "oci_vps_public_ip" {
 output "oci_vps_private_ip" {
   value = oci_core_instance.oci_vps.private_ip
 }
+
+# oci-vps-2: second always-free E2.1.Micro, added 2026-07-21 to replace
+# the terminated instance-20260120-2338 slot and stand up another k8s
+# worker. Launched via the OCI CLI on 2026-07-21 and adopted here.
+import {
+  to = oci_core_instance.oci_vps_2
+  id = "ocid1.instance.oc1.ap-osaka-1.anvwsljrlfc45kicwmfirh5c7tnkunhauqyrjvm4zakjcmvf6ek6xlmjd3eq"
+}
+
+resource "oci_core_instance" "oci_vps_2" {
+  compartment_id      = var.oci_tenancy_ocid
+  availability_domain = "yPbU:AP-OSAKA-1-AD-1"
+  shape               = "VM.Standard.E2.1.Micro"
+  display_name        = "oci-vps-2"
+
+  source_details {
+    source_type             = "image"
+    source_id               = "ocid1.image.oc1.ap-osaka-1.aaaaaaaakkk2ftbt2ztpw3jdriwhadh4xi4rbdi4fspi2xcv27cx7xqj45pq"
+    boot_volume_size_in_gbs = 100
+  }
+
+  create_vnic_details {
+    subnet_id        = oci_core_subnet.k8s.id
+    assign_public_ip = true
+    hostname_label   = "oci-vps-2"
+  }
+
+  metadata = {
+    ssh_authorized_keys = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIN8H2c3Qa2EsEh6RQG6nRoRFblH8fj5dHj9YyVD9tND toof@toof.jp"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+output "oci_vps_2_public_ip" {
+  value = oci_core_instance.oci_vps_2.public_ip
+}
+
+output "oci_vps_2_private_ip" {
+  value = oci_core_instance.oci_vps_2.private_ip
+}
