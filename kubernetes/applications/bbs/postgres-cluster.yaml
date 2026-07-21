@@ -28,7 +28,7 @@ metadata:
   namespace: bbs
 spec:
   instances: 1
-  imageName: ghcr.io/toof-jp/postgres-bigm:sha-4c22b29
+  imageName: ghcr.io/toof-jp/postgres-bigm:18-4c22b29
   postgresql:
     shared_preload_libraries:
       - pg_bigm

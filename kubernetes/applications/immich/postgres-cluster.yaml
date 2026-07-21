@@ -28,7 +28,7 @@ metadata:
   namespace: immich
 spec:
   instances: 1
-  imageName: ghcr.io/toof-jp/postgres-vectorchord:sha-9164946
+  imageName: ghcr.io/toof-jp/postgres-vectorchord:16-9164946
   postgresql:
     shared_preload_libraries:
       - vchord.so
