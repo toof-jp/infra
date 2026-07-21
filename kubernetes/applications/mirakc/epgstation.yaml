@@ -99,10 +99,8 @@ spec:
               mountPath: /app/recorded
             - name: thumbnail
               mountPath: /app/thumbnail
-              subPath: thumbnail
             - name: drop
               mountPath: /app/drop
-              subPath: drop
       volumes:
         - name: config
           configMap:
@@ -113,15 +111,13 @@ spec:
         - name: recorded
           persistentVolumeClaim:
             claimName: epgstation-recorded
-        # thumbnails and drop logs live alongside the DB — small and
-        # cheap; a subPath on the same PVC keeps everything in one
-        # snapshot boundary.
+        # Thumbnails and drop logs are regenerable / ephemeral. Keeping
+        # them off the DB PVC avoids Longhorn's one-attachment-per-RWO
+        # constraint when the same PVC is referenced multiple times.
         - name: thumbnail
-          persistentVolumeClaim:
-            claimName: epgstation-data
+          emptyDir: {}
         - name: drop
-          persistentVolumeClaim:
-            claimName: epgstation-data
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
