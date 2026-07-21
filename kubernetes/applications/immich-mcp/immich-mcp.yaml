@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: immich-mcp
-          image: ghcr.io/toof-jp/immichmcp:v3.1.5-base64.1
+          image: ghcr.io/barryw/immichmcp:v3.2.0
           ports:
             - name: http
               containerPort: 5000
