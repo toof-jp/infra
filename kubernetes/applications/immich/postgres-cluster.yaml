@@ -1,0 +1,63 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: postgres-app-external-secret
+  namespace: immich
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: postgres-app-secret
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: immich
+        password: "{{ .password }}"
+  data:
+    - secretKey: password
+      remoteRef:
+        key: immich-postgres-password
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+  namespace: immich
+spec:
+  instances: 1
+  imageName: ghcr.io/immich-app/postgres:16-vectorchord0.4.3-pgvectors0.2.0
+  postgresql:
+    shared_preload_libraries:
+      - vchord.so
+  affinity:
+    nodeSelector:
+      kubernetes.io/hostname: zen2
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      secret:
+        name: postgres-app-secret
+      dataChecksums: true
+      import:
+        type: microservice
+        databases:
+          - immich
+        source:
+          externalCluster: old-postgres
+  externalClusters:
+    - name: old-postgres
+      connectionParameters:
+        host: postgres
+        user: immich
+        dbname: immich
+        sslmode: disable
+      password:
+        name: postgres-secret
+        key: POSTGRES_PASSWORD
