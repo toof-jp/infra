@@ -16,11 +16,12 @@ The official Docker image does not bundle the Vertex provider, but no manual ins
 
 ## Secret Values
 
-Create this secret in GCP Secret Manager (project `toof-infra`):
+Create these secrets in GCP Secret Manager (project `toof-infra`):
 
 - `openclaw-discord-bot-token`: Discord bot token (see below)
+- `openclaw-gateway-token`: any random string used to authenticate to the Control UI
 
-The gateway auth token (`OPENCLAW_GATEWAY_TOKEN`) is generated in-cluster by the `password` ClusterGenerator. Read it with:
+Read the current value of the gateway token (mirrored into the cluster as `openclaw-gateway-token-secret`) with:
 
 ```sh
 kubectl -n openclaw get secret openclaw-gateway-token-secret \
