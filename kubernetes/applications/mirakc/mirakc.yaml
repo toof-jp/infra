@@ -76,10 +76,13 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 30
           securityContext:
-            # DVB device access needs read/write, not privileged.
-            capabilities:
-              drop: ["ALL"]
-            allowPrivilegeEscalation: false
+            # DVB frontend ioctls are blocked by the default device
+            # cgroup even for root+video-group, so recisdb sees EPERM
+            # opening /dev/dvb/adapterN/frontend0. Kubernetes has no
+            # per-device allowlist outside a full device plugin, so
+            # this is the pragmatic escape hatch for a single-node
+            # home tuner setup.
+            privileged: true
           volumeMounts:
             - name: config
               mountPath: /etc/mirakc/config.yml
