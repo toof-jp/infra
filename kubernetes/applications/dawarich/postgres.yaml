@@ -106,6 +106,9 @@ spec:
         - podSelector:
             matchLabels:
               app: dawarich
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: postgres
       ports:
         - protocol: TCP
           port: 5432
