@@ -126,12 +126,14 @@ metadata:
   labels:
     app: immich-proxy
 spec:
+  type: NodePort
   selector:
     app: immich-proxy
   ports:
     - name: http
       port: 8080
       targetPort: http
+      nodePort: 30283
     - name: metrics
       port: 4040
       targetPort: metrics
