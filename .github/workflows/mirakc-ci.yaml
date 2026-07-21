@@ -2,7 +2,7 @@ name: Build & Push to GHCR (mirakc)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - docker/mirakc/**
       - .github/workflows/mirakc-ci.yaml

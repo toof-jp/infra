@@ -2,7 +2,7 @@ name: Build & Push to GHCR (epgstation)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - docker/epgstation/**
       - .github/workflows/epgstation-ci.yaml
