@@ -16,11 +16,6 @@ spec:
       labels:
         app: nemousu-redirector
     spec:
-      # Pinned to sakura-vps because the public DNS A record for
-      # nemousu.live-on.net points at this node's fixed IP
-      # (153.126.161.157) and traffic is served via NodePort on that node.
-      nodeSelector:
-        kubernetes.io/hostname: sakura-vps
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
