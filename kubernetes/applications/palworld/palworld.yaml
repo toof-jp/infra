@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: palworld-data
   namespace: palworld
+  labels:
+    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteOnce

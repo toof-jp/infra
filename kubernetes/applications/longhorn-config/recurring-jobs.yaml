@@ -1,0 +1,26 @@
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: db-6h
+  namespace: longhorn-system
+spec:
+  cron: "0 */6 * * *"
+  task: backup
+  groups:
+    - db-6h
+  retain: 4
+  concurrency: 2
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: daily
+  namespace: longhorn-system
+spec:
+  cron: "0 18 * * *"
+  task: backup
+  groups:
+    - daily
+  retain: 7
+  concurrency: 2

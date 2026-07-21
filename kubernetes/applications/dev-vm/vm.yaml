@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: dev-home
   namespace: dev-vm
+  labels:
+    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteOnce

@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: openclaw-state
   namespace: openclaw
+  labels:
+    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes: ["ReadWriteOnce"]
   storageClassName: longhorn

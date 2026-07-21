@@ -1,0 +1,12 @@
+---
+apiVersion: longhorn.io/v1beta2
+kind: BackupTarget
+metadata:
+  name: default
+  namespace: longhorn-system
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+spec:
+  backupTargetURL: s3://toof-longhorn-backup@us-east-1/
+  credentialSecret: longhorn-backup-r2
+  pollInterval: 5m0s

@@ -48,6 +48,8 @@ spec:
             namespace: immich-mcp
           - name: kubevirt
             namespace: kubevirt
+          - name: longhorn-config
+            namespace: longhorn-system
           - name: mcp-gate
             namespace: mcp-gate
           - name: monitoring
