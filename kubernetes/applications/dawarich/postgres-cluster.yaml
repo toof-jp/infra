@@ -1,0 +1,79 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: postgres-app-external-secret
+  namespace: dawarich
+spec:
+  refreshPolicy: CreatedOnce
+  secretStoreRef:
+    name: gcp-secret-manager
+    kind: ClusterSecretStore
+  target:
+    name: postgres-app-secret
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: dawarich
+        password: "{{ .password }}"
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: ClusterGenerator
+          name: password
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+  namespace: dawarich
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgis:17-3.5-9
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  bootstrap:
+    initdb:
+      database: dawarich
+      owner: dawarich
+      secret:
+        name: postgres-app-secret
+      dataChecksums: true
+      import:
+        type: microservice
+        databases:
+          - dawarich
+        source:
+          externalCluster: old-postgres
+  externalClusters:
+    - name: old-postgres
+      connectionParameters:
+        host: postgres
+        user: dawarich
+        dbname: dawarich
+        sslmode: disable
+      password:
+        name: postgres-secret
+        key: POSTGRES_PASSWORD
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-cnpg
+  namespace: dawarich
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: postgres
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: dawarich
+      ports:
+        - protocol: TCP
+          port: 5432
