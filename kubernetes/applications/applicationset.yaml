@@ -5,80 +5,43 @@ metadata:
   name: applications
   namespace: argocd
 spec:
+  # Use Go text/template syntax (`{{.path.basename}}`) for template
+  # substitution instead of the legacy fasttemplate.
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  # Preserve cluster resources when an Application is removed from the
+  # generator output. This makes directory renames safe: the old Application
+  # gets deleted without pruning the workload; the newly-named Application
+  # adopts the existing resources on its first sync.
+  syncPolicy:
+    preserveResourcesOnDeletion: true
   generators:
-    - list:
-        elements:
-          - name: apple-health
-            namespace: apple-health
-          - name: apple-health-mcp
-            namespace: apple-health-mcp
-          - name: archiveteam-warrior
-            namespace: archiveteam-warrior
-          - name: arc-runners
-            namespace: arc-runners
-          - name: arc-systems
-            namespace: arc-systems
-          - name: argocd
-            namespace: argocd
-          - name: bbs
-            namespace: bbs
-          - name: beancount
-            namespace: beancount
-          - name: beancount-mcp
-            namespace: beancount-mcp
-          - name: blues
-            namespace: blues
-          - name: cdi
-            namespace: cdi
-          - name: cloudflare-external-secret
-            namespace: cloudflare
-          - name: cloudnative-pg
-            namespace: cnpg-system
-          - name: dawarich
-            namespace: dawarich
-          - name: dawarich-mcp
-            namespace: dawarich-mcp
-          - name: dev-vm
-            namespace: dev-vm
-          - name: external-secrets
-            namespace: external-secrets
-          - name: healthcheck
-            namespace: healthcheck
-          - name: immich-mcp
-            namespace: immich-mcp
-          - name: kubevirt
-            namespace: kubevirt
-          - name: longhorn-config
-            namespace: longhorn-system
-          - name: mcp-gate
-            namespace: mcp-gate
-          - name: monitoring
-            namespace: monitoring
-          - name: npm-stats
-            namespace: npm-stats
-          - name: obsidian
-            namespace: obsidian
-          - name: obsidian-msp
-            namespace: obsidian-msp
-          - name: openclaw
-            namespace: openclaw
-          - name: palworld
-            namespace: palworld
-          - name: shisha-log
-            namespace: shisha-log
+    - git:
+        repoURL: https://github.com/toof-jp/infra
+        revision: HEAD
+        directories:
+          - path: kubernetes/applications/*
+          # These directories provide supplementary manifests for multi-source
+          # Applications defined in kubernetes/applications/{headlamp,immich}.yaml
+          # and must not spawn their own Applications.
+          - path: kubernetes/applications/headlamp
+            exclude: true
+          - path: kubernetes/applications/immich
+            exclude: true
   template:
     metadata:
-      name: "{{name}}"
+      name: "{{.path.basename}}"
       namespace: argocd
     spec:
       project: toof-infra
       source:
         repoURL: https://github.com/toof-jp/infra
         targetRevision: HEAD
-        path: "kubernetes/applications/{{name}}"
+        path: "{{.path.path}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{namespace}}"
+        namespace: "{{.path.basename}}"
       syncPolicy:
         automated:
           prune: true
