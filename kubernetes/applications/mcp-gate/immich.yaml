@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: mcp-gate
-          image: cpremus/mcp-gate:0.16.29
+          image: cpremus/mcp-gate:0.16.30
           ports:
             - name: http
               containerPort: 8080
