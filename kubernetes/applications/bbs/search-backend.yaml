@@ -13,6 +13,13 @@ spec:
       labels:
         app: search-backend
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:18-alpine
+          command:
+            - sh
+            - -c
+            - until pg_isready -h postgres-rw -p 5432; do sleep 2; done
       containers:
         - name: search-backend
           image: ghcr.io/toof-jp/bbs-search-backend:sha-a6eebce
