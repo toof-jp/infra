@@ -8,7 +8,7 @@ spec:
   cron: "0 */6 * * *"
   task: backup
   groups:
-    - db-6h
+    - default
   retain: 4
   concurrency: 2
 ---
@@ -21,6 +21,6 @@ spec:
   cron: "0 18 * * *"
   task: backup
   groups:
-    - daily
+    - default
   retain: 7
   concurrency: 2
