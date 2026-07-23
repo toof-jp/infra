@@ -13,6 +13,13 @@ spec:
       labels:
         app: fetch-post-discord-bot
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:18-alpine
+          command:
+            - sh
+            - -c
+            - until pg_isready -h postgres-rw -p 5432; do sleep 2; done
       containers:
         - name: fetch-post-discord-bot
           image: ghcr.io/toof-jp/bbs-fetch-post-discord-bot:sha-8f9fd09

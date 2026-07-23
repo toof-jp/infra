@@ -13,6 +13,13 @@ spec:
       labels:
         app: discord-webhook
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:18-alpine
+          command:
+            - sh
+            - -c
+            - until pg_isready -h postgres-rw -p 5432; do sleep 2; done
       containers:
         - name: discord-webhook
           image: ghcr.io/toof-jp/discord-webhook:sha-4319bdc
