@@ -18,10 +18,10 @@ helmCharts:
         jobEnabled: false
       defaultSettings:
         taintToleration: node-role.kubernetes.io/control-plane=:NoSchedule
-        defaultReplicaCount: 1
+        defaultReplicaCount: 2
         concurrentAutomaticEngineUpgradePerNodeLimit: 1
       persistence:
-        defaultClassReplicaCount: 1
+        defaultClassReplicaCount: 2
       longhornManager:
         tolerations: &controlPlaneToleration
           - key: node-role.kubernetes.io/control-plane
