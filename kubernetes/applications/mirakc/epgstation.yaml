@@ -61,7 +61,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: epgstation
-          image: ghcr.io/toof-jp/infra-epgstation:latest@sha256:171f5fd761a17488a211ec8801cdeb0f28e4a67ec74b7c5d8563dc39f10adb6a
+          image: ghcr.io/toof-jp/infra-epgstation:latest@sha256:8bd2fe54ed4a31f6dca876756fcdd328a7e8101548bcfac191cbf2cdc47fb5f4
           imagePullPolicy: Always
           env:
             - name: TZ
