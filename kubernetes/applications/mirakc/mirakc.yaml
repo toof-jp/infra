@@ -46,7 +46,7 @@ spec:
         supplementalGroups: [26]
       containers:
         - name: mirakc
-          image: ghcr.io/toof-jp/infra-mirakc:latest@sha256:f77b5171735126595e2e8506f6ecfeb28fa293b8699c220762d958b4a24ca13e
+          image: ghcr.io/toof-jp/infra-mirakc:latest@sha256:0e76fbe7e1817b91574b73b52e7010b7273af73731b1e5d38c32ce809008a21f
           imagePullPolicy: Always
           env:
             - name: TZ
