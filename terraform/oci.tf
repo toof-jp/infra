@@ -1,7 +1,10 @@
-# OCI always-free resources (ap-osaka-1, root compartment). The VCN and its
-# defaults were hand-created in the console (2025-08) and are adopted here
-# via import blocks; display names keep their console-generated values so
-# the import is a no-op.
+# OCI always-free resources (ap-osaka-1, root compartment). Compute
+# instances were retired 2026-07-27 after both E2.1.Micro workers wedged
+# under memory pressure; the VCN and its defaults are kept in state for
+# potential future use (A1.Flex once capacity is available). The VCN was
+# hand-created in the console (2025-08) and is adopted here via import
+# blocks; display names keep their console-generated values so the import
+# is a no-op.
 
 import {
   to = oci_core_vcn.k8s
@@ -58,23 +61,6 @@ resource "oci_core_default_security_list" "k8s" {
     protocol         = "all"
   }
 
-  # SSH is not exposed publicly; access is over Tailscale (same policy as
-  # vultr-vps, see vultr.tf).
-  #
-  # TEMPORARY bootstrap exception: neither OCI host runs Tailscale yet, so
-  # the tailscale-only policy from PR #183 locked out all SSH access before
-  # the mesh existed. Keep TCP/22 open until oci-vps has joined the tailnet,
-  # then remove this rule to restore the intended policy.
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-
-    tcp_options {
-      min = 22
-      max = 22
-    }
-  }
-
   ingress_security_rules {
     protocol = "1"
     source   = "0.0.0.0/0"
@@ -128,64 +114,12 @@ resource "oci_core_subnet" "k8s" {
   dns_label      = "subnet08170335"
 }
 
-# oci-vps: always-free E2.1.Micro intended to join the k8s cluster over
-# Tailscale (same policy as vultr-vps). Launched via the OCI CLI on
-# 2026-07-19 and adopted here.
-import {
-  to = oci_core_instance.oci_vps
-  id = "ocid1.instance.oc1.ap-osaka-1.anvwsljrlfc45kicc74hfyeusg5ujhnl2rhdjfkrajbjb2qpph2laf7a545q"
-}
-
-resource "oci_core_instance" "oci_vps" {
-  compartment_id      = var.oci_tenancy_ocid
-  availability_domain = "yPbU:AP-OSAKA-1-AD-1"
-  shape               = "VM.Standard.E2.1.Micro"
-  display_name        = "oci-vps"
-
-  source_details {
-    source_type             = "image"
-    source_id               = "ocid1.image.oc1.ap-osaka-1.aaaaaaaakkk2ftbt2ztpw3jdriwhadh4xi4rbdi4fspi2xcv27cx7xqj45pq"
-    boot_volume_size_in_gbs = 100
-  }
-
-  create_vnic_details {
-    subnet_id        = oci_core_subnet.k8s.id
-    assign_public_ip = true
-    hostname_label   = "oci-vps"
-  }
-
-  metadata = {
-    ssh_authorized_keys = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIN8H2c3Qa2EsEh6RQG6nRoRFblH8fj5dHj9YyVD9tND toof@toof.jp"
-  }
-
-  lifecycle {
-    # The workspace auto-applies; never let a drifted attribute replace the
-    # always-free instance (capacity may be unrecoverable).
-    prevent_destroy = true
-  }
-}
-
-output "oci_vps_public_ip" {
-  value = oci_core_instance.oci_vps.public_ip
-}
-
-output "oci_vps_private_ip" {
-  value = oci_core_instance.oci_vps.private_ip
-}
-
-# oci-vps-2 is unmanaged by terraform for now. PR #215 imported it
-# against OCID ...wmfirh5c...jd3eq, but that instance was terminated
-# after a boot-failure debug loop; the current live oci-vps-2 was
-# rebuilt via manual LUSTRATE on a fresh boot volume with a different
-# OCID (...4gn5e5vbwi...zideaq7dlqhtbta). Rather than juggle state
-# mismatches, unmanage the resource here. A follow-up PR can re-import
-# it with the current OCID once the k8s worker is proven stable.
-#
-# `lifecycle { destroy = false }` on the removed block preserves the
-# actual instance — terraform only drops it from state.
+# Compute instances retired 2026-07-27. oci-vps (E2.1.Micro) is destroyed
+# via this removed block; oci-vps-2 was already unmanaged (terminated
+# separately via OCI CLI), so no state entry exists for it.
 removed {
-  from = oci_core_instance.oci_vps_2
+  from = oci_core_instance.oci_vps
   lifecycle {
-    destroy = false
+    destroy = true
   }
 }
