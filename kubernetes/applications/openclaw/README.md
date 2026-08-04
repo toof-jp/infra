@@ -6,13 +6,13 @@
 - Discord: bot connection via `DISCORD_BOT_TOKEN`
 - Cluster access: read-only RBAC (`view` + cluster-scoped read) with `kubectl` installed by an init container
 - Prometheus: `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
-- Model: Claude on Vertex AI (`anthropic-vertex/claude-sonnet-4-6`) via the `openclaw-vertex-sa` service account
+- Model: DeepSeek V4 Flash on [opencode Go](https://opencode.ai/docs/go/) (`opencode-go/deepseek-v4-flash`)
 
-## Vertex AI Provider
+## Model Provider
 
-The agent talks to Claude through Google Vertex AI instead of the Anthropic API. Terraform (`terraform/service_account.tf`, `terraform/api.tf`) provisions everything: enables `aiplatform.googleapis.com`, creates the `openclaw-vertex-sa` service account with `roles/aiplatform.user`, and stores its key in GCP Secret Manager as `openclaw-vertex-sa-key`. The Deployment mounts the key and sets `GOOGLE_APPLICATION_CREDENTIALS`, `GOOGLE_CLOUD_PROJECT`, and `GOOGLE_CLOUD_LOCATION` for ADC.
+The agent talks to DeepSeek through the opencode Go subscription, declared in `openclaw.json` as the custom `opencode-go` provider: OpenAI-compatible API at `https://opencode.ai/zen/go/v1`, authenticated with the `OPENCODE_API_KEY` environment variable that comes from the `openclaw-secret` ExternalSecret.
 
-The official Docker image does not bundle the Vertex provider, but no manual install is needed: the plugins are declared in `openclaw.json` (`plugins.entries`), and the gateway's startup doctor auto-installs `@openclaw/anthropic-vertex-provider` and `@openclaw/discord` from npm onto the state PVC on first start.
+Only the Discord plugin is declared in `plugins.entries`; the gateway's startup doctor auto-installs `@openclaw/discord` from npm onto the state PVC on first start. A custom OpenAI-compatible provider needs no plugin.
 
 ## Secret Values
 
@@ -20,6 +20,7 @@ Create these secrets in GCP Secret Manager (project `toof-infra`):
 
 - `openclaw-discord-bot-token`: Discord bot token (see below)
 - `openclaw-gateway-token`: any random string used to authenticate to the Control UI
+- `openclaw-opencode-api-key`: opencode Zen/Go API key from <https://opencode.ai/auth>
 
 Read the current value of the gateway token (mirrored into the cluster as `openclaw-gateway-token-secret`) with:
 
