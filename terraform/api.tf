@@ -14,7 +14,6 @@ locals {
     "run.googleapis.com",
     "eventarc.googleapis.com",
     "secretmanager.googleapis.com",
-    "aiplatform.googleapis.com",
   ]
 }
 
