@@ -30,10 +30,10 @@ data:
             "apiKey": "${OPENCODE_API_KEY}",
             "models": [
               {
-                "id": "deepseek-v4-flash",
-                "name": "DeepSeek V4 Flash",
+                "id": "mimo-v2.5",
+                "name": "MiMo V2.5",
                 "reasoning": true,
-                "input": ["text"],
+                "input": ["text", "image"],
                 "cost": {
                   "input": 0.14,
                   "output": 0.28,
@@ -41,7 +41,7 @@ data:
                   "cacheWrite": 0
                 },
                 "contextWindow": 1000000,
-                "maxTokens": 384000
+                "maxTokens": 128000
               }
             ]
           }
@@ -72,7 +72,7 @@ data:
       "agents": {
         "defaults": {
           "model": {
-            "primary": "opencode-go/deepseek-v4-flash"
+            "primary": "opencode-go/mimo-v2.5"
           }
         }
       },
