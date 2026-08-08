@@ -6,11 +6,13 @@
 - Discord: bot connection via `DISCORD_BOT_TOKEN`
 - Cluster access: read-only RBAC (`view` + cluster-scoped read) with `kubectl` installed by an init container
 - Prometheus: `http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090`
-- Model: DeepSeek V4 Flash on [opencode Go](https://opencode.ai/docs/go/) (`opencode-go/deepseek-v4-flash`)
+- Model: MiMo V2.5 on [opencode Go](https://opencode.ai/docs/go/) (`opencode-go/mimo-v2.5`)
 
 ## Model Provider
 
-The agent talks to DeepSeek through the opencode Go subscription, declared in `openclaw.json` as the custom `opencode-go` provider: OpenAI-compatible API at `https://opencode.ai/zen/go/v1`, authenticated with the `OPENCODE_API_KEY` environment variable that comes from the `openclaw-secret` ExternalSecret.
+The agent talks to the model through the opencode Go subscription, declared in `openclaw.json` as the custom `opencode-go` provider: OpenAI-compatible API at `https://opencode.ai/zen/go/v1`, authenticated with the `OPENCODE_API_KEY` environment variable that comes from the `openclaw-secret` ExternalSecret.
+
+DeepSeek V4 Flash was the first choice but opencode Go rejects it with `403 The latest version of this model is only available hosted in China and requires explicit opt in`, so it needs an opt-in in the opencode workspace before it can be used.
 
 Only the Discord plugin is declared in `plugins.entries`; the gateway's startup doctor auto-installs `@openclaw/discord` from npm onto the state PVC on first start. A custom OpenAI-compatible provider needs no plugin.
 
