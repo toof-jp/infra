@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: freikin/dawarich:1.10.1
+          image: freikin/dawarich:1.14.4
           command:
             - web-entrypoint.sh
           args:
@@ -114,7 +114,7 @@ spec:
               mountPath: /var/app/storage
               subPath: storage
         - name: sidekiq
-          image: freikin/dawarich:1.10.1
+          image: freikin/dawarich:1.14.4
           command:
             - sidekiq-entrypoint.sh
           args:
